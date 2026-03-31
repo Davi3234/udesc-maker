@@ -1,0 +1,101 @@
+---
+import type { ProjetoCardProps } from "./ProjetoCard.astro"
+import ProjetoCard from "./ProjetoCard.astro"
+
+interface Props {
+  projetos?: ProjetoCardProps[]
+  titulo?: string
+  descricao?: string
+}
+
+const {
+  projetos = [],
+  titulo = "Projetos em Destaque",
+  descricao = "Comece sua jornada maker hoje mesmo com nossos projetos guiados passo a passo.",
+} = Astro.props
+---
+
+<section class="destaque">
+  <div class="container">
+    <div class="destaque__header">
+      <div class="destaque__header-text">
+        <h2 class="destaque__title">{titulo}</h2>
+        <p class="destaque__description">{descricao}</p>
+      </div>
+      <a href="/projetos" class="destaque__view-all">Ver todos os projetos</a>
+    </div>
+
+    <div class="destaque__grid">
+      {projetos.map(projeto => <ProjetoCard {...projeto} />)}
+    </div>
+  </div>
+</section>
+
+<style>
+  .destaque {
+    padding-block: 72px;
+    background: var(--white);
+  }
+
+  .destaque__header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 24px;
+    margin-bottom: 40px;
+  }
+
+  .destaque__header-text {
+    display: flex; flex-direction: column; gap: 8px;
+  }
+
+  .destaque__title {
+    font-family: var(--font-display);
+    font-size: clamp(1.5rem, 3vw, 2rem);
+    font-weight: 800;
+    color: var(--gray-900);
+    letter-spacing: -.02em;
+  }
+
+  .destaque__description {
+    font-size: .95rem;
+    line-height: 1.6;
+    color: var(--gray-500);
+    max-width: 44ch;
+  }
+
+  .destaque__view-all {
+    flex-shrink: 0;
+    font-size: .875rem;
+    font-weight: 600;
+    color: var(--green-700);
+    align-self: flex-end;
+    transition: color var(--transition);
+    white-space: nowrap;
+  }
+
+  .destaque__view-all:hover {
+    color: var(--green-900);
+  }
+
+  .destaque__grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 24px;
+  }
+
+  @media (max-width: 960px) {
+    .destaque__grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  @media (max-width: 600px) {
+    .destaque__header {
+      flex-direction: column;
+    }
+    .destaque__grid  {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

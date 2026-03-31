@@ -1,0 +1,145 @@
+---
+import type { Projeto, ProjetoLevel } from '../domain/interfaces/Projeto';
+
+export interface ProjetoCardProps extends Projeto {}
+
+interface Props extends ProjetoCardProps {}
+
+const { slug, titulo, descricao, imagem: {src: imagemSrc, alt: imageAlt = ''}, level} = Astro.props
+
+const levelConfig: Record<ProjetoLevel, { label: string; color: string }> = {
+  iniciante: { label: "Iniciante", color: "var(--green-600)" },
+  intermediário: { label: "Intermediário", color: "#d97706" },
+  avançado: { label: "Avançado", color: "var(--red-500)" },
+}
+
+const { label: levelLabel, color: levelColor } = levelConfig[level]
+---
+
+<article class="projeto-card">
+  <div class="projeto-card__image-wrapper">
+    <img
+      src={imagemSrc}
+      alt={imageAlt ?? titulo}
+      class="projeto-card__image"
+      width="400"
+      height="240"
+      loading="lazy"
+    />
+  </div>
+
+  <div class="projeto-card__body">
+    <div class="projeto-card__meta">
+      <span class="projeto-card__level" style={`color: ${levelColor}; border-color: ${levelColor}33`}>
+        {levelLabel}
+      </span>
+    </div>
+
+    <h3 class="projeto-card__title">{titulo}</h3>
+    <p class="projeto-card__description">{descricao}</p>
+
+    <a href={`/projetos/${slug}`} class="projeto-card__cta">
+      Ver projeto
+      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <path d="M5 12h14M12 5l7 7-7 7"/>
+      </svg>
+    </a>
+  </div>
+</article>
+
+<style>
+  .projeto-card {
+    display: flex;
+    flex-direction: column;
+    border-radius: var(--radius-lg);
+    background: var(--white);
+    box-shadow: var(--shadow-sm);
+    border: 1px solid var(--gray-100);
+    overflow: hidden;
+    transition: box-shadow var(--transition), transform var(--transition);
+  }
+
+  .projeto-card:hover {
+    box-shadow: var(--shadow-md);
+    transform: translateY(-4px);
+  }
+
+  .projeto-card__image-wrapper {
+    aspect-ratio: 16 / 9;
+    overflow: hidden;
+  }
+
+  .projeto-card__image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 400ms ease;
+  }
+
+  .projeto-card:hover .projeto-card__image {
+    transform: scale(1.04);
+  }
+
+  .projeto-card__body {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    padding: 20px;
+    flex: 1;
+  }
+
+  .projeto-card__meta {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .projeto-card__level {
+    display: inline-block;
+    padding: 3px 10px;
+    border-radius: 999px;
+    border: 1px solid;
+    font-size: .72rem;
+    font-weight: 700;
+    font-family: var(--font-display);
+    text-transform: uppercase;
+    letter-spacing: .06em;
+  }
+
+  .projeto-card__icon { color: var(--gray-400); }
+
+  .projeto-card__title {
+    font-family: var(--font-display);
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: var(--gray-900);
+    line-height: 1.3;
+  }
+
+  .projeto-card__description {
+    font-size: .9rem;
+    line-height: 1.6;
+    color: var(--gray-500);
+    flex: 1;
+  }
+
+  .projeto-card__cta {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 8px;
+    padding: 12px 20px;
+    border-radius: var(--radius-md);
+    background: var(--green-800);
+    color: var(--white);
+    font-family: var(--font-display);
+    font-size: .875rem;
+    font-weight: 600;
+    transition: background var(--transition), gap var(--transition);
+  }
+
+  .projeto-card__cta:hover {
+    background: var(--green-900);
+    gap: 12px;
+  }
+</style>
