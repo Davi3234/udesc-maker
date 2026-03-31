@@ -1,0 +1,144 @@
+---
+const navLinks = [
+  { label: "Início", href: "/" },
+  { label: "Projetos", href: "/projetos" },
+];
+---
+
+<header class="navbar">
+  <div class="container navbar__inner">
+    <a href="/" class="navbar__brand">
+      <div class="navbar__logo-icon" aria-hidden="true">A</div>
+      <span class="navbar__brand-name">UDESC Maker</span>
+    </a>
+
+    <nav class="navbar__nav" aria-label="Navegação principal">
+      {navLinks.map((link) => (
+        <a href={link.href} class="navbar__link">{link.label}</a>
+      ))}
+    </nav>
+
+    <div class="navbar__search">
+      <label for="search" class="sr-only">Buscar projetos</label>
+      <div class="navbar__search-wrapper">
+        <svg class="navbar__search-icon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/>
+        </svg>
+        <input id="search" type="search" placeholder="buscar projetos..." class="navbar__search-input" />
+      </div>
+    </div>
+  </div>
+</header>
+
+<style>
+  .navbar {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: var(--white);
+    border-bottom: 1px solid var(--gray-100);
+    box-shadow: var(--shadow-sm);
+  }
+
+  .navbar__inner {
+    display: flex;
+    align-items: center;
+    gap: 32px;
+    height: 64px;
+  }
+
+  .navbar__brand {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: 1rem;
+    color: var(--gray-900);
+    flex-shrink: 0;
+    transition: opacity var(--transition);
+  }
+
+  .navbar__brand:hover {
+    opacity: .8;
+  }
+
+  .navbar__logo-icon {
+    width: 32px;
+    height: 32px;
+    border-radius: var(--radius-sm);
+    background: var(--green-800);
+    color: var(--white);
+    display: grid;
+    place-items: center;
+    font-size: .85rem;
+    font-weight: 700;
+  }
+
+  .navbar__nav {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+
+  .navbar__link {
+    padding: 6px 14px;
+    border-radius: var(--radius-sm);
+    font-size: .95rem;
+    font-weight: 500;
+    color: var(--gray-700);
+    transition: background var(--transition), color var(--transition);
+  }
+
+  .navbar__link:hover {
+    background: var(--gray-100);
+    color: var(--gray-900);
+  }
+
+  .navbar__search {
+    margin-left: auto;
+  }
+
+  .navbar__search-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+  }
+
+  .navbar__search-icon {
+    position: absolute;
+    left: 12px;
+    color: var(--gray-500);
+    pointer-events: none;
+  }
+
+  .navbar__search-input {
+    width: 220px;
+    padding: 8px 14px 8px 36px;
+    border: 1px solid var(--gray-300);
+    border-radius: var(--radius-md);
+    font-family: var(--font-body);
+    font-size: .9rem;
+    color: var(--gray-900);
+    background: var(--gray-50);
+    transition: border-color var(--transition), box-shadow var(--transition), width var(--transition);
+    outline: none;
+  }
+
+  .navbar__search-input::placeholder {
+    color: var(--gray-500);
+  }
+
+  .navbar__search-input:focus {
+    border-color: var(--green-600);
+    box-shadow: 0 0 0 3px rgba(35,107,72,.12);
+    width: 280px;
+    background: var(--white);
+  }
+
+  @media (max-width: 640px) {
+    .navbar__search {
+      display: none;
+    }
+  }
+</style>
