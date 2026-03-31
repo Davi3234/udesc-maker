@@ -3,9 +3,45 @@ import CoursesBanner from "../components/CoursesBanner.astro"
 import Footer from "../components/Footer.astro"
 import Hero from "../components/Hero.astro"
 import Navbar from "../components/Navbar.astro"
+import type { ProjetoCardProps } from "../components/ProjetoCard.astro"
 import ProjetosDestaque from "../components/ProjetosDestaque.astro"
 import MainLayout from "../layouts/MainLayout.astro"
 
+const destaques: ProjetoCardProps[] = [
+  {
+    slug: "robo-seguidor-de-linha",
+    titulo: "Robô Seguidor de Linha",
+    descricao: "Aprenda a construir seu primeiro robô autônomo capaz de seguir circuitos complexos.",
+    imagem: {
+      src: "/images/projetos/robo-seguidor.jpg",
+      alt: "Robô seguidor de linha montado sobre uma mesa"
+    },
+    level: "iniciante",
+    icon: "robot",
+  },
+  {
+    slug: "marcenaria-criativa",
+    titulo: "Marcenaria Criativa",
+    descricao: "Criações incríveis utilizando madeira, ferramentas manuais e muita criatividade.",
+    imagem: {
+      src: "/images/projetos/marcenaria.jpg",
+      alt: "Projeto de marcenaria com pincéis de madeira"
+    },
+    level: "intermediário",
+    icon: "wood",
+  },
+  {
+    slug: "eletronica-diy",
+    titulo: "Eletrônica DIY",
+    descricao: "Circuitos básicos e lógica de programação para quem está começando na eletrônica.",
+    imagem: {
+      src: "/images/projetos/eletronica.jpg",
+      alt: "Placa de circuito eletrônico verde"
+    },
+    level: "iniciante",
+    icon: "circuit",
+  },
+]
 ---
 <MainLayout
   titulo="UDESC Maker — Explore projetos maker e aprenda criando"
@@ -15,7 +51,7 @@ import MainLayout from "../layouts/MainLayout.astro"
 
   <main>
     <Hero />
-    <ProjetosDestaque />
+    <ProjetosDestaque projetos={destaques} />
     <CoursesBanner />
   </main>
 
