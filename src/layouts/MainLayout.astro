@@ -1,0 +1,26 @@
+---
+interface Props {
+  titulo?: string;
+  descricao?: string;
+}
+
+const {
+  titulo = "UDESC Maker",
+  descricao = "Uma plataforma da UDESC para divulgar ciência e tecnologia para a comunidade através da prática e da criatividade.",
+} = Astro.props;
+---
+
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content={descricao} />
+    <meta name="generator" content={Astro.generator} />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <title>{titulo}</title>
+  </head>
+  <body>
+    <slot />
+  </body>
+</html>
