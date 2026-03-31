@@ -1,0 +1,87 @@
+---
+interface Props {
+  titulo?: string;
+  descricao?: string;
+  textoBotao?: string;
+  linkBotao?: string;
+}
+
+const {
+  titulo = "Cursos Acadêmicos UDESC",
+  descricao = "Nossos projetos são integrados aos currículos de Engenharia, Design e Computação. Descubra como levar a cultura maker para sua sala de aula.",
+  textoBotao = "Conhecer Cursos",
+  linkBotao = "/cursos",
+} = Astro.props;
+---
+
+<section class="courses-banner">
+  <div class="container courses-banner__inner">
+    <div class="courses-banner__content">
+      <h2 class="courses-banner__title">{titulo}</h2>
+      <p class="courses-banner__description">{descricao}</p>
+    </div>
+    <a href={linkBotao} class="courses-banner__botao">
+      {textoBotao}
+    </a>
+  </div>
+</section>
+
+<style>
+  .courses-banner {
+    background: var(--green-800);
+    padding-block: 64px;
+  }
+
+  .courses-banner__inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 40px;
+  }
+
+  .courses-banner__content {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    max-width: 560px;
+  }
+
+  .courses-banner__title {
+    font-family: var(--font-display);
+    font-size: clamp(1.4rem, 3vw, 1.875rem);
+    font-weight: 800;
+    color: var(--white);
+    letter-spacing: -.02em;
+  }
+
+  .courses-banner__description {
+    font-size: .95rem;
+    line-height: 1.65;
+    color: rgba(255, 255, 255, .75);
+  }
+
+  .courses-banner__botao {
+    flex-shrink: 0;
+    display: inline-flex;
+    align-items: center;
+    padding: 14px 28px;
+    border-radius: var(--radius-md);
+    background: var(--white);
+    color: var(--green-800);
+    font-family: var(--font-display);
+    font-size: .95rem;
+    font-weight: 700;
+    white-space: nowrap;
+    transition: background var(--transition), transform var(--transition), box-shadow var(--transition);
+  }
+
+  .courses-banner__botao:hover {
+    background: var(--gray-50);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(0,0,0,.2);
+  }
+
+  @media (max-width: 700px) {
+    .courses-banner__inner { flex-direction: column; align-items: flex-start; }
+  }
+</style>
