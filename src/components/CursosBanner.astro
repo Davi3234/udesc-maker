@@ -14,40 +14,40 @@ const {
 } = Astro.props;
 ---
 
-<section class="courses-banner">
-  <div class="container courses-banner__inner">
-    <div class="courses-banner__content">
-      <h2 class="courses-banner__title">{titulo}</h2>
-      <p class="courses-banner__description">{descricao}</p>
+<section class="cursos-banner">
+  <div class="container cursos-banner__inner">
+    <div class="cursos-banner__content">
+      <h2 class="cursos-banner__title">{titulo}</h2>
+      <p class="cursos-banner__description">{descricao}</p>
     </div>
 
-    <a href={linkBotao} class="courses-banner__botao">
+    <a href={linkBotao} class="cursos-banner__botao">
       {textoBotao}
     </a>
   </div>
 </section>
 
 <style>
-  .courses-banner {
+  .cursos-banner {
     background: var(--green-800);
     padding-block: 64px;
   }
 
-  .courses-banner__inner {
+  .cursos-banner__inner {
     display: flex;
     align-items: center;
     justify-content: space-between;
     gap: 40px;
   }
 
-  .courses-banner__content {
+  .cursos-banner__content {
     display: flex;
     flex-direction: column;
     gap: 12px;
     max-width: 560px;
   }
 
-  .courses-banner__title {
+  .cursos-banner__title {
     font-family: var(--font-display);
     font-size: clamp(1.4rem, 3vw, 1.875rem);
     font-weight: 800;
@@ -55,13 +55,13 @@ const {
     letter-spacing: -.02em;
   }
 
-  .courses-banner__description {
+  .cursos-banner__description {
     font-size: .95rem;
     line-height: 1.65;
     color: rgba(255, 255, 255, .75);
   }
 
-  .courses-banner__botao {
+  .cursos-banner__botao {
     flex-shrink: 0;
     display: inline-flex;
     align-items: center;
@@ -76,13 +76,13 @@ const {
     transition: background var(--transition), transform var(--transition), box-shadow var(--transition);
   }
 
-  .courses-banner__botao:hover {
+  .cursos-banner__botao:hover {
     background: var(--gray-50);
     transform: translateY(-2px);
     box-shadow: 0 8px 24px rgba(0,0,0,.2);
   }
 
   @media (max-width: 700px) {
-    .courses-banner__inner { flex-direction: column; align-items: flex-start; }
+    .cursos-banner__inner { flex-direction: column; align-items: flex-start; }
   }
 </style>
