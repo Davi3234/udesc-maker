@@ -1,4 +1,6 @@
 ---
+import Logo from "./Logo.astro";
+
 const navLinks = [
   { label: "Início", href: "/" },
   { label: "Projetos", href: "/projetos" },
@@ -8,7 +10,7 @@ const navLinks = [
 <header class="navbar">
   <div class="container navbar__inner">
     <a href="/" class="navbar__brand">
-      <div class="navbar__logo-icon" aria-hidden="true">A</div>
+      <Logo/>
       <span class="navbar__brand-name">UDESC Maker</span>
     </a>
 
@@ -26,7 +28,7 @@ const navLinks = [
           <circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/>
         </svg>
 
-        <input id="search" type="search" placeholder="buscar projetos..." class="navbar__search-input" />
+        <input id="search" type="search" placeholder="Buscar projetos..." class="navbar__search-input" />
       </div>
     </div>
   </div>
@@ -63,18 +65,6 @@ const navLinks = [
 
   .navbar__brand:hover {
     opacity: .8;
-  }
-
-  .navbar__logo-icon {
-    width: 32px;
-    height: 32px;
-    border-radius: var(--radius-sm);
-    background: var(--green-800);
-    color: var(--white);
-    display: grid;
-    place-items: center;
-    font-size: .85rem;
-    font-weight: 700;
   }
 
   .navbar__nav {

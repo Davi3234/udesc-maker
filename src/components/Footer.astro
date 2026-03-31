@@ -1,4 +1,7 @@
 ---
+
+import Logo from "./Logo.astro";
+
 const acessoRapidoLinks = [
   { label: "Projetos", href: "/projetos" },
 ];
@@ -16,7 +19,7 @@ const anoAtual = new Date().getFullYear();
     <div class="footer__top">
       <div class="footer__brand">
         <a href="/" class="footer__brand-link">
-          <div class="footer__logo-icon" aria-hidden="true">A</div>
+          <Logo/>
           <span class="footer__brand-name">UDESC Maker</span>
         </a>
 
@@ -74,18 +77,6 @@ const anoAtual = new Date().getFullYear();
     font-weight: 700;
     font-size: .95rem;
     color: var(--gray-900);
-  }
-
-  .footer__logo-icon {
-    width: 30px;
-    height: 30px;
-    border-radius: var(--radius-sm);
-    background: var(--green-800);
-    color: var(--white);
-    display: grid;
-    place-items: center;
-    font-size: .8rem;
-    font-weight: 700;
   }
 
   .footer__brand-desc {
