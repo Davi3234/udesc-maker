@@ -1,0 +1,148 @@
+---
+const acessoRapidoLinks = [
+  { label: "Projetos", href: "/projetos" },
+];
+
+const legalLinks = [
+  { label: "Privacidade", href: "/privacidade" },
+  { label: "Termos de Uso", href: "/termos" },
+];
+
+const anoAtual = new Date().getFullYear();
+---
+
+<footer class="footer">
+  <div class="container">
+    <div class="footer__top">
+      <div class="footer__brand">
+        <a href="/" class="footer__brand-link">
+          <div class="footer__logo-icon" aria-hidden="true">A</div>
+          <span class="footer__brand-name">UDESC Maker</span>
+        </a>
+
+        <p class="footer__brand-desc">
+          Iniciativa da Universidade do Estado de Santa Catarina para promover a educação tecnológica, inovação e a cultura do "faça você mesmo" para toda a sociedade.
+        </p>
+      </div>
+
+      <nav class="footer__links" aria-label="Links rápidos">
+        <h3 class="footer__links-title">Links Rápidos</h3>
+
+        <ul class="footer__links-list">
+          {acessoRapidoLinks.map(link => (
+            <li>
+              <a href={link.href} class="footer__link">{link.label}</a>
+            </li>
+          ))}
+        </ul>
+      </nav>
+    </div>
+
+    <div class="footer__bottom">
+      <p class="footer__copy">© {anoAtual} UDESC Maker. Todos os direitos reservados.</p>
+
+      <nav class="footer__legal" aria-label="Links legais">
+        {legalLinks.map(link => <a href={link.href} class="footer__legal-link">{link.label}</a>)}
+      </nav>
+    </div>
+  </div>
+</footer>
+
+<style>
+  .footer {
+    background: var(--white);
+    border-top: 1px solid var(--gray-100);
+    padding-block: 48px 24px;
+  }
+
+  .footer__top {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 64px;
+    padding-bottom: 40px;
+    border-bottom: 1px solid var(--gray-100);
+    margin-bottom: 24px;
+  }
+
+  .footer__brand { display: flex; flex-direction: column; gap: 12px; max-width: 320px; }
+
+  .footer__brand-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: .95rem;
+    color: var(--gray-900);
+  }
+
+  .footer__logo-icon {
+    width: 30px;
+    height: 30px;
+    border-radius: var(--radius-sm);
+    background: var(--green-800);
+    color: var(--white);
+    display: grid;
+    place-items: center;
+    font-size: .8rem;
+    font-weight: 700;
+  }
+
+  .footer__brand-desc {
+    font-size: .875rem;
+    line-height: 1.65;
+    color: var(--gray-500);
+  }
+
+  .footer__links { display: flex; flex-direction: column; gap: 12px; }
+
+  .footer__links-title {
+    font-family: var(--font-display);
+    font-size: .8rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: .08em;
+    color: var(--gray-500);
+  }
+
+  .footer__links-list { list-style: none; display: flex; flex-direction: column; gap: 8px; }
+
+  .footer__link {
+    font-size: .9rem;
+    color: var(--gray-700);
+    transition: color var(--transition);
+  }
+
+  .footer__link:hover { color: var(--green-700); }
+
+  .footer__bottom {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+  }
+
+  .footer__copy {
+    font-size: .8rem;
+    color: var(--gray-400);
+  }
+
+  .footer__legal {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+  }
+
+  .footer__legal-link {
+    font-size: .8rem;
+    color: var(--gray-400);
+    transition: color var(--transition);
+  }
+
+  .footer__legal-link:hover { color: var(--gray-600); }
+
+  @media (max-width: 600px) {
+    .footer__top { grid-template-columns: 1fr; gap: 32px; }
+    .footer__bottom { flex-direction: column; align-items: flex-start; }
+  }
+</style>
