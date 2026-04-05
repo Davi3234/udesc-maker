@@ -1,19 +1,60 @@
 ---
-import type { Projeto, ProjetoLevel } from '../domain/interfaces/Projeto';
+import type { ProjetoLevel } from '../domain/interfaces/Projeto';
 
-export interface ProjetoCardProps extends Projeto {}
+export interface ProjetoCardProps {
+  slug: string
+  titulo: string
+  resumo: string
+  descricao?: string
+  level: ProjetoLevel
+  categoria: string
+  tags: string[]
+  idadeMinima: number
+  duracao: number
+  autor: string
+  imagem: {
+    src: string
+    alt?: string
+  }
+}
 
 interface Props extends ProjetoCardProps {}
 
-const { slug, titulo, descricao, imagem: {src: imagemSrc, alt: imageAlt = ''}, level} = Astro.props
+const {
+  slug,
+  titulo,
+  resumo,
+  level,
+  categoria,
+  tags = [],
+  idadeMinima,
+  duracao,
+  imagem: { src: imagemSrc, alt: imageAlt = '' },
+} = Astro.props
 
-const levelConfig: Record<ProjetoLevel, { label: string; color: string }> = {
-  iniciante: { label: "Iniciante", color: "var(--green-600)" },
-  intermediário: { label: "Intermediário", color: "#d97706" },
-  avançado: { label: "Avançado", color: "var(--red-500)" },
+const levelConfig: Record<ProjetoLevel, { label: string; color: string; bg: string }> = {
+  iniciante:    { label: "Iniciante",    color: "#fff", bg: "var(--green-600)" },
+  intermediário: { label: "Intermediário", color: "#fff", bg: "#d97706" },
+  avançado:     { label: "Avançado",    color: "#fff", bg: "var(--red-500)" },
 }
 
-const { label: levelLabel, color: levelColor } = levelConfig[level]
+const { label: levelLabel, color: levelColor, bg: levelBg } = levelConfig[level]
+
+const categoriaIconMap: Record<string, string> = {
+  "Robótica":      "🤖",
+  "Eletrônica":    "⚡",
+  "Fabricação 3D": "🖨️",
+  "IoT & Sensores": "📡",
+  "Aeroespacial":  "🚀",
+  "Programação":   "💻",
+}
+const categoriaIcon = categoriaIconMap[categoria] ?? "🔧"
+
+function formatDuracao(h: number) {
+  if (h < 1) return `${Math.round(h * 60)} min`
+  if (h === 1) return "1 hora"
+  return `${h} horas`
+}
 ---
 
 <article class="projeto-card">
@@ -25,21 +66,50 @@ const { label: levelLabel, color: levelColor } = levelConfig[level]
       width="400"
       height="240"
       loading="lazy"
+      onerror="this.src='/images/placeholder.jpg'"
     />
+    <span
+      class="projeto-card__badge-level"
+      style={`background: ${levelBg}; color: ${levelColor}`}
+    >
+      {levelLabel}
+    </span>
   </div>
 
   <div class="projeto-card__body">
+    <span class="projeto-card__categoria">
+      <span class="projeto-card__categoria-icon">{categoriaIcon}</span>
+      {categoria}
+    </span>
+
+    <h3 class="projeto-card__title">{titulo}</h3>
+    <p class="projeto-card__description">{resumo}</p>
+
+    {tags.length > 0 && (
+      <div class="projeto-card__tags">
+        {tags.slice(0, 3).map(tag => (
+          <span class="projeto-card__tag">{tag}</span>
+        ))}
+      </div>
+    )}
+
     <div class="projeto-card__meta">
-      <span class="projeto-card__level" style={`color: ${levelColor}; border-color: ${levelColor}33`}>
+      <span class="projeto-card__meta-item" title="Idade mínima recomendada">
+        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+        {idadeMinima}+ anos
+      </span>
+      <span class="projeto-card__meta-item" title="Duração estimada">
+        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+        {formatDuracao(duracao)}
+      </span>
+      <span class="projeto-card__meta-item" title="Nível de dificuldade">
+        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
         {levelLabel}
       </span>
     </div>
 
-    <h3 class="projeto-card__title">{titulo}</h3>
-    <p class="projeto-card__description">{descricao}</p>
-
     <a href={`/projetos/${slug}`} class="projeto-card__cta">
-      Ver projeto
+      Ver detalhes
       <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
         <path d="M5 12h14M12 5l7 7-7 7"/>
       </svg>
@@ -65,8 +135,10 @@ const { label: levelLabel, color: levelColor } = levelConfig[level]
   }
 
   .projeto-card__image-wrapper {
+    position: relative;
     aspect-ratio: 16 / 9;
     overflow: hidden;
+    background: var(--gray-100);
   }
 
   .projeto-card__image {
@@ -80,6 +152,19 @@ const { label: levelLabel, color: levelColor } = levelConfig[level]
     transform: scale(1.04);
   }
 
+  .projeto-card__badge-level {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    padding: 4px 12px;
+    border-radius: 999px;
+    font-family: var(--font-display);
+    font-size: .7rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: .06em;
+  }
+
   .projeto-card__body {
     display: flex;
     flex-direction: column;
@@ -88,25 +173,21 @@ const { label: levelLabel, color: levelColor } = levelConfig[level]
     flex: 1;
   }
 
-  .projeto-card__meta {
-    display: flex;
+  .projeto-card__categoria {
+    display: inline-flex;
     align-items: center;
-    justify-content: space-between;
-  }
-
-  .projeto-card__level {
-    display: inline-block;
-    padding: 3px 10px;
-    border-radius: 999px;
-    border: 1px solid;
-    font-size: .72rem;
-    font-weight: 700;
+    gap: 5px;
     font-family: var(--font-display);
+    font-size: .72rem;
+    font-weight: 600;
+    color: var(--green-700);
     text-transform: uppercase;
     letter-spacing: .06em;
   }
 
-  .projeto-card__icon { color: var(--gray-400); }
+  .projeto-card__categoria-icon {
+    font-size: .9rem;
+  }
 
   .projeto-card__title {
     font-family: var(--font-display);
@@ -123,11 +204,51 @@ const { label: levelLabel, color: levelColor } = levelConfig[level]
     flex: 1;
   }
 
+  .projeto-card__tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+
+  .projeto-card__tag {
+    padding: 3px 10px;
+    border-radius: 999px;
+    background: var(--green-100);
+    color: var(--green-700);
+    font-size: .72rem;
+    font-weight: 600;
+    font-family: var(--font-display);
+  }
+
+  .projeto-card__meta {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding-block: 6px;
+    border-top: 1px solid var(--gray-100);
+  }
+
+  .projeto-card__meta-item {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    font-size: .78rem;
+    color: var(--gray-500);
+    font-family: var(--font-display);
+    font-weight: 500;
+  }
+
+  .projeto-card__meta-item svg {
+    flex-shrink: 0;
+    color: var(--gray-400);
+  }
+
   .projeto-card__cta {
     display: inline-flex;
     align-items: center;
+    justify-content: center;
     gap: 8px;
-    margin-top: 8px;
+    margin-top: 4px;
     padding: 12px 20px;
     border-radius: var(--radius-md);
     background: var(--green-800);
