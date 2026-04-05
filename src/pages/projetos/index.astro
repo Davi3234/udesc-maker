@@ -1,0 +1,550 @@
+---
+import Footer from "../../components/Footer.astro";
+import Navbar from "../../components/Navbar.astro";
+import type { ProjetoCardProps } from "../../components/ProjetoCard.astro";
+import ProjetoCard from "../../components/ProjetoCard.astro";
+import MainLayout from "../../layouts/MainLayout.astro";
+
+const projetoFiles = import.meta.glob("../../content/projects/*.md");
+
+const projetos: ProjetoCardProps[] = projetoFiles.map(file => {
+  const fm = file.frontmatter;
+  const slug = file.file
+    .split("/")
+    .pop()!
+    .replace(/\.md$/, "");
+  return {
+    slug,
+    titulo: fm.titulo ?? "",
+    resumo: fm.resumo ?? fm.descricao ?? "",
+    level: fm.nivel ?? "iniciante",
+    categoria: fm.categoria ?? "Geral",
+    tags: fm.tags ?? [],
+    idadeMinima: fm.idadeMinima ?? 0,
+    duracao: fm.duracao ?? 1,
+    autor: fm.autor ?? "",
+    imagem: {
+      src: fm.imagem ?? "/images/placeholder-project.jpg",
+      alt: fm.titulo ?? "",
+    },
+  };
+});
+
+const categorias = [...new Set(projetos.map((p) => p.categoria))].sort();
+const niveis: Array<{ value: string; label: string }> = [
+  { value: "iniciante", label: "Iniciante" },
+  { value: "intermediário", label: "Intermediário" },
+  { value: "avançado", label: "Avançado" },
+];
+---
+
+<MainLayout
+  titulo="Projetos — UDESC Maker"
+  descricao="Explore todos os projetos maker disponíveis na plataforma UDESC Maker."
+>
+  <Navbar />
+
+  <main class="projetos-page">
+    <section class="projetos-header">
+      <div class="container">
+        <h1 class="projetos-header__title">Explore Projetos Maker</h1>
+        <p class="projetos-header__subtitle">
+          Descubra guias passo-a-passo para criar tecnologia e ciência no
+          laboratório ou em casa.
+        </p>
+      </div>
+    </section>
+
+    <section class="projetos-content">
+      <div class="container">
+        <div class="filtros" id="filtros">
+          <div class="filtros__grupo">
+            <button
+              class="filtro-btn filtro-btn--dropdown"
+              data-filter="categoria"
+              aria-expanded="false"
+              aria-haspopup="listbox"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg>
+              Categoria
+              <svg class="filtro-btn__chevron" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="6 9 12 15 18 9"/></svg>
+              <ul class="filtro-dropdown" role="listbox" aria-label="Categorias">
+                <li class="filtro-dropdown__item filtro-dropdown__item--active" data-value="" role="option">Todas</li>
+                {categorias.map(cat => (
+                  <li class="filtro-dropdown__item" data-value={cat} role="option">{cat}</li>
+                ))}
+              </ul>
+            </button>
+
+            <button
+              class="filtro-btn filtro-btn--dropdown"
+              data-filter="idadeMinima"
+              aria-expanded="false"
+              aria-haspopup="listbox"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
+              Idade Mínima
+              <svg class="filtro-btn__chevron" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="6 9 12 15 18 9"/></svg>
+              <ul class="filtro-dropdown" role="listbox" aria-label="Idade mínima">
+                <li class="filtro-dropdown__item filtro-dropdown__item--active" data-value="" role="option">Qualquer idade</li>
+                <li class="filtro-dropdown__item" data-value="6" role="option">A partir de 6 anos</li>
+                <li class="filtro-dropdown__item" data-value="8" role="option">A partir de 8 anos</li>
+                <li class="filtro-dropdown__item" data-value="10" role="option">A partir de 10 anos</li>
+                <li class="filtro-dropdown__item" data-value="12" role="option">A partir de 12 anos</li>
+                <li class="filtro-dropdown__item" data-value="14" role="option">A partir de 14 anos</li>
+              </ul>
+            </button>
+
+            <button
+              class="filtro-btn filtro-btn--dropdown"
+              data-filter="duracao"
+              aria-expanded="false"
+              aria-haspopup="listbox"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+              Duração
+              <svg class="filtro-btn__chevron" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="6 9 12 15 18 9"/></svg>
+              <ul class="filtro-dropdown" role="listbox" aria-label="Duração">
+                <li class="filtro-dropdown__item filtro-dropdown__item--active" data-value="" role="option">Qualquer duração</li>
+                <li class="filtro-dropdown__item" data-value="1" role="option">Até 1 hora</li>
+                <li class="filtro-dropdown__item" data-value="2" role="option">Até 2 horas</li>
+                <li class="filtro-dropdown__item" data-value="4" role="option">Até 4 horas</li>
+                <li class="filtro-dropdown__item" data-value="6" role="option">Até 6 horas</li>
+              </ul>
+            </button>
+
+            <button
+              class="filtro-btn filtro-btn--dropdown"
+              data-filter="nivel"
+              aria-expanded="false"
+              aria-haspopup="listbox"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+              Nível de Dificuldade
+              <svg class="filtro-btn__chevron" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="6 9 12 15 18 9"/></svg>
+              <ul class="filtro-dropdown" role="listbox" aria-label="Nível">
+                <li class="filtro-dropdown__item filtro-dropdown__item--active" data-value="" role="option">Todos os níveis</li>
+                {niveis.map(n => (
+                  <li class="filtro-dropdown__item" data-value={n.value} role="option">{n.label}</li>
+                ))}
+              </ul>
+            </button>
+          </div>
+
+          <button class="filtros__limpar" id="limpar-filtros" aria-label="Limpar todos os filtros">
+            Limpar filtros
+          </button>
+        </div>
+
+        <p class="projetos-count" id="projetos-count">
+          <span id="count-num">{projetos.length}</span> projeto{projetos.length !== 1 ? "s" : ""} encontrado{projetos.length !== 1 ? "s" : ""}
+        </p>
+
+        <div class="projetos-grid" id="projetos-grid">
+          {projetos.map((projeto) => (
+            <div
+              class="projeto-card-wrapper"
+              data-titulo={projeto.titulo.toLowerCase()}
+              data-resumo={projeto.resumo.toLowerCase()}
+              data-tags={(projeto.tags ?? []).join(" ").toLowerCase()}
+              data-categoria={projeto.categoria}
+              data-nivel={projeto.level}
+              data-idade={projeto.idadeMinima}
+              data-duracao={projeto.duracao}
+            >
+              <ProjetoCard {...projeto} />
+            </div>
+          ))}
+        </div>
+
+        <div class="projetos-empty" id="projetos-empty" hidden>
+          <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+          <h3>Nenhum projeto encontrado</h3>
+          <p>Tente ajustar os filtros ou a busca para encontrar o que procura.</p>
+          <button id="limpar-filtros-empty">Limpar filtros</button>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <Footer />
+</MainLayout>
+
+<script>
+  interface FilterState {
+    search: string;
+    categoria: string;
+    nivel: string;
+    idadeMinima: string;
+    duracao: string;
+  }
+
+  const state: FilterState = {
+    search: "",
+    categoria: "",
+    nivel: "",
+    idadeMinima: "",
+    duracao: "",
+  };
+
+  const grid = document.getElementById("projetos-grid")!;
+  const empty = document.getElementById("projetos-empty") as HTMLElement;
+  const countNum = document.getElementById("count-num")!;
+  const countEl = document.getElementById("projetos-count")!;
+  const cards = Array.from(grid.querySelectorAll<HTMLElement>(".projeto-card-wrapper"));
+
+  const searchInput = document.querySelector<HTMLInputElement>("#search");
+  if (searchInput) {
+    searchInput.addEventListener("input", () => {
+      state.search = searchInput.value.trim().toLowerCase();
+      applyFilters();
+    });
+  }
+
+  const dropdownBtns = document.querySelectorAll<HTMLElement>(".filtro-btn--dropdown");
+
+  dropdownBtns.forEach((btn) => {
+    btn.addEventListener("click", (e) => {
+      e.stopPropagation();
+
+      const isOpen = btn.getAttribute("aria-expanded") === "true";
+      closeAllDropdowns();
+
+      if (!isOpen) {
+        btn.setAttribute("aria-expanded", "true");
+      }
+    });
+
+    const items = btn.querySelectorAll<HTMLElement>(".filtro-dropdown__item");
+    items.forEach((item) => {
+      item.addEventListener("click", (e) => {
+        e.stopPropagation();
+        const filterKey = btn.dataset.filter as keyof FilterState;
+        const value = item.dataset.value ?? "";
+
+        items.forEach((i) => i.classList.remove("filtro-dropdown__item--active"));
+        item.classList.add("filtro-dropdown__item--active");
+
+        state[filterKey] = value;
+        updateBtnLabel(btn, item.textContent ?? "", value);
+        closeAllDropdowns();
+        applyFilters();
+      });
+    });
+  });
+
+  document.addEventListener("click", () => closeAllDropdowns());
+
+  function closeAllDropdowns() {
+    dropdownBtns.forEach((b) => b.setAttribute("aria-expanded", "false"));
+  }
+
+  function updateBtnLabel(btn: HTMLElement, label: string, value: string) {
+    const textNodes = Array.from(btn.childNodes).filter((n) => n.nodeType === Node.TEXT_NODE);
+
+    const defaultLabels: Record<string, string> = {
+      categoria: "Categoria",
+      idadeMinima: "Idade Mínima",
+      duracao: "Duração",
+      nivel: "Nível de Dificuldade",
+    };
+
+    const filterKey = btn.dataset.filter ?? "";
+    const defaultLabel = defaultLabels[filterKey] ?? "";
+    const displayLabel = value === "" ? defaultLabel : label;
+
+    textNodes.forEach((n) => {
+      if (n.textContent && n.textContent.trim() !== "") {
+        n.textContent = ` ${displayLabel} `;
+      }
+    });
+
+    btn.classList.toggle("filtro-btn--active", value !== "");
+  }
+
+  function clearAll() {
+    state.search = "";
+    state.categoria = "";
+    state.nivel = "";
+    state.idadeMinima = "";
+    state.duracao = "";
+
+    if (searchInput) searchInput.value = "";
+
+    dropdownBtns.forEach((btn) => {
+      btn.classList.remove("filtro-btn--active");
+      const filterKey = btn.dataset.filter ?? "";
+      const defaultLabels: Record<string, string> = {
+        categoria: "Categoria",
+        idadeMinima: "Idade Mínima",
+        duracao: "Duração",
+        nivel: "Nível de Dificuldade",
+      };
+      const textNodes = Array.from(btn.childNodes).filter(
+        (n) => n.nodeType === Node.TEXT_NODE && n.textContent?.trim()
+      );
+      textNodes.forEach((n) => {
+        n.textContent = ` ${defaultLabels[filterKey] ?? ""} `;
+      });
+
+      const items = btn.querySelectorAll<HTMLElement>(".filtro-dropdown__item");
+      items.forEach((i, idx) => {
+        i.classList.toggle("filtro-dropdown__item--active", idx === 0);
+      });
+    });
+
+    applyFilters();
+  }
+
+  document.getElementById("limpar-filtros")?.addEventListener("click", clearAll);
+  document.getElementById("limpar-filtros-empty")?.addEventListener("click", clearAll);
+
+  function applyFilters() {
+    let visible = 0;
+
+    cards.forEach((card) => {
+      const titulo = card.dataset.titulo ?? "";
+      const resumo = card.dataset.resumo ?? "";
+      const tags = card.dataset.tags ?? "";
+      const categoria = card.dataset.categoria ?? "";
+      const nivel = card.dataset.nivel ?? "";
+      const idade = Number(card.dataset.idade ?? 0);
+      const duracao = Number(card.dataset.duracao ?? 0);
+
+      const q = state.search;
+      const matchSearch = !q ||
+        titulo.includes(q) ||
+        resumo.includes(q) ||
+        tags.includes(q) ||
+        categoria.toLowerCase().includes(q);
+
+      const matchCategoria = !state.categoria || categoria === state.categoria;
+
+      const matchNivel = !state.nivel || nivel === state.nivel;
+
+      const matchIdade = !state.idadeMinima || idade >= Number(state.idadeMinima);
+
+      const matchDuracao = !state.duracao || duracao <= Number(state.duracao);
+
+      const show = matchSearch && matchCategoria && matchNivel && matchIdade && matchDuracao;
+
+      card.style.display = show ? "" : "none";
+      if (show) visible++;
+    });
+
+    countNum.textContent = String(visible);
+    countEl.textContent = `${visible} projeto${visible !== 1 ? "s" : ""} encontrado${visible !== 1 ? "s" : ""}`;
+
+    empty.hidden = visible > 0;
+    grid.style.display = visible === 0 ? "none" : "";
+  }
+</script>
+
+<style>
+  .projetos-header {
+    background: var(--gray-50);
+    padding-block: 64px 48px;
+    text-align: center;
+  }
+
+  .projetos-header__title {
+    font-family: var(--font-display);
+    font-size: clamp(1.8rem, 4vw, 2.5rem);
+    font-weight: 800;
+    color: var(--green-800);
+    letter-spacing: -.02em;
+    margin-bottom: 12px;
+  }
+
+  .projetos-header__subtitle {
+    font-size: 1rem;
+    color: var(--gray-500);
+    max-width: 52ch;
+    margin-inline: auto;
+    line-height: 1.6;
+  }
+
+  .projetos-content {
+    padding-block: 40px 80px;
+    background: var(--white);
+  }
+
+  .filtros {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    flex-wrap: wrap;
+    margin-bottom: 28px;
+  }
+
+  .filtros__grupo {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+
+  .filtro-btn {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    padding: 9px 14px;
+    border-radius: 999px;
+    border: 1.5px solid var(--gray-300);
+    background: var(--white);
+    font-family: var(--font-display);
+    font-size: .82rem;
+    font-weight: 600;
+    color: var(--gray-700);
+    cursor: pointer;
+    transition: border-color var(--transition), background var(--transition), color var(--transition);
+    white-space: nowrap;
+    user-select: none;
+  }
+
+  .filtro-btn:hover {
+    border-color: var(--green-600);
+    color: var(--green-700);
+  }
+
+  .filtro-btn--active {
+    border-color: var(--green-600);
+    background: var(--green-100);
+    color: var(--green-800);
+  }
+
+  .filtro-btn__chevron {
+    transition: transform var(--transition);
+  }
+
+  .filtro-btn[aria-expanded="true"] .filtro-btn__chevron {
+    transform: rotate(180deg);
+  }
+
+  .filtro-dropdown {
+    position: absolute;
+    top: calc(100% + 8px);
+    left: 0;
+    z-index: 100;
+    min-width: 190px;
+    background: var(--white);
+    border: 1.5px solid var(--gray-100);
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-md);
+    list-style: none;
+    padding: 6px 0;
+    display: none;
+    opacity: 0;
+    transform: translateY(-6px);
+    transition: opacity var(--transition), transform var(--transition);
+  }
+
+  .filtro-btn[aria-expanded="true"] .filtro-dropdown {
+    display: block;
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  .filtro-dropdown__item {
+    padding: 9px 16px;
+    font-family: var(--font-display);
+    font-size: .84rem;
+    color: var(--gray-700);
+    cursor: pointer;
+    transition: background var(--transition), color var(--transition);
+  }
+
+  .filtro-dropdown__item:hover {
+    background: var(--gray-100);
+    color: var(--gray-900);
+  }
+
+  .filtro-dropdown__item--active {
+    color: var(--green-700);
+    font-weight: 700;
+    background: var(--green-50);
+  }
+
+  .filtros__limpar {
+    background: none;
+    border: none;
+    font-family: var(--font-display);
+    font-size: .84rem;
+    font-weight: 600;
+    color: var(--gray-500);
+    cursor: pointer;
+    padding: 4px 0;
+    transition: color var(--transition);
+    white-space: nowrap;
+  }
+
+  .filtros__limpar:hover {
+    color: var(--gray-900);
+  }
+
+  .projetos-count {
+    font-family: var(--font-display);
+    font-size: .84rem;
+    color: var(--gray-500);
+    margin-bottom: 24px;
+  }
+
+  .projetos-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 24px;
+  }
+
+  @media (max-width: 960px) {
+    .projetos-grid { grid-template-columns: repeat(2, 1fr); }
+  }
+
+  @media (max-width: 600px) {
+    .projetos-grid { grid-template-columns: 1fr; }
+    .filtros { flex-direction: column; align-items: flex-start; }
+    .filtros__grupo { width: 100%; }
+  }
+
+  .projetos-empty {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+    padding: 80px 24px;
+    text-align: center;
+    color: var(--gray-400);
+  }
+
+  .projetos-empty h3 {
+    font-family: var(--font-display);
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: var(--gray-700);
+    margin-top: 4px;
+  }
+
+  .projetos-empty p {
+    font-size: .9rem;
+    color: var(--gray-500);
+    max-width: 36ch;
+    line-height: 1.6;
+  }
+
+  .projetos-empty button {
+    margin-top: 8px;
+    padding: 10px 24px;
+    border-radius: var(--radius-md);
+    background: var(--green-800);
+    color: var(--white);
+    font-family: var(--font-display);
+    font-size: .875rem;
+    font-weight: 600;
+    border: none;
+    cursor: pointer;
+    transition: background var(--transition);
+  }
+
+  .projetos-empty button:hover { background: var(--green-900); }
+</style>
