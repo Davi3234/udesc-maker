@@ -5,30 +5,55 @@ import type { ProjetoCardProps } from "../../components/ProjetoCard.astro";
 import ProjetoCard from "../../components/ProjetoCard.astro";
 import MainLayout from "../../layouts/MainLayout.astro";
 
-const projetoFiles = import.meta.glob("../../content/projects/*.md");
+interface FrontmatterProjeto {
+  titulo?: string;
+  resumo?: string;
+  descricao?: string;
+  nivel?: ProjetoCardProps["level"];
+  categoria?: string;
+  tags?: string[];
+  idadeMinima?: number;
+  duracao?: number;
+  autor?: string;
+  imagem?: string;
+}
 
-const projetos: ProjetoCardProps[] = projetoFiles.map(file => {
-  const fm = file.frontmatter;
-  const slug = file.file
-    .split("/")
-    .pop()!
-    .replace(/\.md$/, "");
-  return {
-    slug,
-    titulo: fm.titulo ?? "",
-    resumo: fm.resumo ?? fm.descricao ?? "",
-    level: fm.nivel ?? "iniciante",
-    categoria: fm.categoria ?? "Geral",
-    tags: fm.tags ?? [],
-    idadeMinima: fm.idadeMinima ?? 0,
-    duracao: fm.duracao ?? 1,
-    autor: fm.autor ?? "",
-    imagem: {
-      src: fm.imagem ?? "/images/placeholder-project.jpg",
-      alt: fm.titulo ?? "",
-    },
-  };
-});
+interface ModuloProjeto {
+  frontmatter: FrontmatterProjeto;
+  default: unknown;
+}
+
+// import.meta.glob com eager:true resolve os módulos imediatamente,
+// retornando o conteúdo direto sem precisar de await por módulo.
+const arquivosProjetos = import.meta.glob<ModuloProjeto>(
+  "../../content/projects/*.md",
+  { eager: true }
+);
+
+const projetos: ProjetoCardProps[] = Object.entries(arquivosProjetos).map(
+  ([caminho, modulo]) => {
+    const fm = modulo.frontmatter;
+
+    // Extrai o slug a partir do caminho do arquivo
+    const slug = caminho.split("/").pop()!.replace(/\.md$/, "");
+
+    return {
+      slug,
+      titulo: fm.titulo ?? "",
+      resumo: fm.resumo ?? fm.descricao ?? "",
+      level: fm.nivel ?? "iniciante",
+      categoria: fm.categoria ?? "Geral",
+      tags: fm.tags ?? [],
+      idadeMinima: fm.idadeMinima ?? 0,
+      duracao: fm.duracao ?? 1,
+      autor: fm.autor ?? "",
+      imagem: {
+        src: fm.imagem ?? "/images/placeholder-project.jpg",
+        alt: fm.titulo ?? "",
+      },
+    };
+  }
+);
 
 const categorias = [...new Set(projetos.map((p) => p.categoria))].sort();
 const niveis: Array<{ value: string; label: string }> = [
@@ -70,7 +95,7 @@ const niveis: Array<{ value: string; label: string }> = [
               <svg class="filtro-btn__chevron" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="6 9 12 15 18 9"/></svg>
               <ul class="filtro-dropdown" role="listbox" aria-label="Categorias">
                 <li class="filtro-dropdown__item filtro-dropdown__item--active" data-value="" role="option">Todas</li>
-                {categorias.map(cat => (
+                {categorias.map((cat) => (
                   <li class="filtro-dropdown__item" data-value={cat} role="option">{cat}</li>
                 ))}
               </ul>
@@ -124,7 +149,7 @@ const niveis: Array<{ value: string; label: string }> = [
               <svg class="filtro-btn__chevron" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="6 9 12 15 18 9"/></svg>
               <ul class="filtro-dropdown" role="listbox" aria-label="Nível">
                 <li class="filtro-dropdown__item filtro-dropdown__item--active" data-value="" role="option">Todos os níveis</li>
-                {niveis.map(n => (
+                {niveis.map((n) => (
                   <li class="filtro-dropdown__item" data-value={n.value} role="option">{n.label}</li>
                 ))}
               </ul>
@@ -171,16 +196,16 @@ const niveis: Array<{ value: string; label: string }> = [
 </MainLayout>
 
 <script>
-  interface FilterState {
-    search: string;
+  interface EstadoFiltros {
+    busca: string;
     categoria: string;
     nivel: string;
     idadeMinima: string;
     duracao: string;
   }
 
-  const state: FilterState = {
-    search: "",
+  const estado: EstadoFiltros = {
+    busca: "",
     categoria: "",
     nivel: "",
     idadeMinima: "",
@@ -188,119 +213,116 @@ const niveis: Array<{ value: string; label: string }> = [
   };
 
   const grid = document.getElementById("projetos-grid")!;
-  const empty = document.getElementById("projetos-empty") as HTMLElement;
-  const countNum = document.getElementById("count-num")!;
-  const countEl = document.getElementById("projetos-count")!;
+  const vazio = document.getElementById("projetos-empty") as HTMLElement;
+  const contadorNumero = document.getElementById("count-num")!;
+  const contadorTexto = document.getElementById("projetos-count")!;
   const cards = Array.from(grid.querySelectorAll<HTMLElement>(".projeto-card-wrapper"));
 
-  const searchInput = document.querySelector<HTMLInputElement>("#search");
-  if (searchInput) {
-    searchInput.addEventListener("input", () => {
-      state.search = searchInput.value.trim().toLowerCase();
-      applyFilters();
+  // Sincroniza o campo de busca da Navbar com os filtros da página
+  const campoBusca = document.querySelector<HTMLInputElement>("#search");
+  if (campoBusca) {
+    campoBusca.addEventListener("input", () => {
+      estado.busca = campoBusca.value.trim().toLowerCase();
+      aplicarFiltros();
     });
   }
 
-  const dropdownBtns = document.querySelectorAll<HTMLElement>(".filtro-btn--dropdown");
+  const botoesDropdown = document.querySelectorAll<HTMLElement>(".filtro-btn--dropdown");
 
-  dropdownBtns.forEach((btn) => {
-    btn.addEventListener("click", (e) => {
-      e.stopPropagation();
+  botoesDropdown.forEach((botao) => {
+    botao.addEventListener("click", (evento) => {
+      evento.stopPropagation();
 
-      const isOpen = btn.getAttribute("aria-expanded") === "true";
-      closeAllDropdowns();
+      const estaAberto = botao.getAttribute("aria-expanded") === "true";
+      fecharTodosDropdowns();
 
-      if (!isOpen) {
-        btn.setAttribute("aria-expanded", "true");
+      if (!estaAberto) {
+        botao.setAttribute("aria-expanded", "true");
       }
     });
 
-    const items = btn.querySelectorAll<HTMLElement>(".filtro-dropdown__item");
-    items.forEach((item) => {
-      item.addEventListener("click", (e) => {
-        e.stopPropagation();
-        const filterKey = btn.dataset.filter as keyof FilterState;
-        const value = item.dataset.value ?? "";
+    const itens = botao.querySelectorAll<HTMLElement>(".filtro-dropdown__item");
+    itens.forEach((item) => {
+      item.addEventListener("click", (evento) => {
+        evento.stopPropagation();
 
-        items.forEach((i) => i.classList.remove("filtro-dropdown__item--active"));
+        const chaveFiltro = botao.dataset.filter as keyof EstadoFiltros;
+        const valor = item.dataset.value ?? "";
+
+        itens.forEach((i) => i.classList.remove("filtro-dropdown__item--active"));
         item.classList.add("filtro-dropdown__item--active");
 
-        state[filterKey] = value;
-        updateBtnLabel(btn, item.textContent ?? "", value);
-        closeAllDropdowns();
-        applyFilters();
+        estado[chaveFiltro] = valor;
+        atualizarRotuloBotao(botao, item.textContent ?? "", valor);
+        fecharTodosDropdowns();
+        aplicarFiltros();
       });
     });
   });
 
-  document.addEventListener("click", () => closeAllDropdowns());
+  document.addEventListener("click", () => fecharTodosDropdowns());
 
-  function closeAllDropdowns() {
-    dropdownBtns.forEach((b) => b.setAttribute("aria-expanded", "false"));
+  function fecharTodosDropdowns() {
+    botoesDropdown.forEach((b) => b.setAttribute("aria-expanded", "false"));
   }
 
-  function updateBtnLabel(btn: HTMLElement, label: string, value: string) {
-    const textNodes = Array.from(btn.childNodes).filter((n) => n.nodeType === Node.TEXT_NODE);
+  const rotulosPadrao: Record<string, string> = {
+    categoria: "Categoria",
+    idadeMinima: "Idade Mínima",
+    duracao: "Duração",
+    nivel: "Nível de Dificuldade",
+  };
 
-    const defaultLabels: Record<string, string> = {
-      categoria: "Categoria",
-      idadeMinima: "Idade Mínima",
-      duracao: "Duração",
-      nivel: "Nível de Dificuldade",
-    };
+  function atualizarRotuloBotao(botao: HTMLElement, rotulo: string, valor: string) {
+    const nosTexto = Array.from(botao.childNodes).filter(
+      (n) => n.nodeType === Node.TEXT_NODE && n.textContent?.trim()
+    );
 
-    const filterKey = btn.dataset.filter ?? "";
-    const defaultLabel = defaultLabels[filterKey] ?? "";
-    const displayLabel = value === "" ? defaultLabel : label;
+    const chaveFiltro = botao.dataset.filter ?? "";
+    const rotuloPadrao = rotulosPadrao[chaveFiltro] ?? "";
+    const rotuloExibido = valor === "" ? rotuloPadrao : rotulo;
 
-    textNodes.forEach((n) => {
-      if (n.textContent && n.textContent.trim() !== "") {
-        n.textContent = ` ${displayLabel} `;
-      }
+    nosTexto.forEach((n) => {
+      n.textContent = ` ${rotuloExibido} `;
     });
 
-    btn.classList.toggle("filtro-btn--active", value !== "");
+    botao.classList.toggle("filtro-btn--active", valor !== "");
   }
 
-  function clearAll() {
-    state.search = "";
-    state.categoria = "";
-    state.nivel = "";
-    state.idadeMinima = "";
-    state.duracao = "";
+  function limparTodosFiltros() {
+    estado.busca = "";
+    estado.categoria = "";
+    estado.nivel = "";
+    estado.idadeMinima = "";
+    estado.duracao = "";
 
-    if (searchInput) searchInput.value = "";
+    if (campoBusca) campoBusca.value = "";
 
-    dropdownBtns.forEach((btn) => {
-      btn.classList.remove("filtro-btn--active");
-      const filterKey = btn.dataset.filter ?? "";
-      const defaultLabels: Record<string, string> = {
-        categoria: "Categoria",
-        idadeMinima: "Idade Mínima",
-        duracao: "Duração",
-        nivel: "Nível de Dificuldade",
-      };
-      const textNodes = Array.from(btn.childNodes).filter(
+    botoesDropdown.forEach((botao) => {
+      botao.classList.remove("filtro-btn--active");
+
+      const chaveFiltro = botao.dataset.filter ?? "";
+      const nosTexto = Array.from(botao.childNodes).filter(
         (n) => n.nodeType === Node.TEXT_NODE && n.textContent?.trim()
       );
-      textNodes.forEach((n) => {
-        n.textContent = ` ${defaultLabels[filterKey] ?? ""} `;
+      nosTexto.forEach((n) => {
+        n.textContent = ` ${rotulosPadrao[chaveFiltro] ?? ""} `;
       });
 
-      const items = btn.querySelectorAll<HTMLElement>(".filtro-dropdown__item");
-      items.forEach((i, idx) => {
-        i.classList.toggle("filtro-dropdown__item--active", idx === 0);
+      const itens = botao.querySelectorAll<HTMLElement>(".filtro-dropdown__item");
+      itens.forEach((item, indice) => {
+        item.classList.toggle("filtro-dropdown__item--active", indice === 0);
       });
     });
 
-    applyFilters();
+    aplicarFiltros();
   }
 
-  document.getElementById("limpar-filtros")?.addEventListener("click", clearAll);
-  document.getElementById("limpar-filtros-empty")?.addEventListener("click", clearAll);
+  document.getElementById("limpar-filtros")?.addEventListener("click", limparTodosFiltros);
+  document.getElementById("limpar-filtros-empty")?.addEventListener("click", limparTodosFiltros);
 
-  function applyFilters() {
-    let visible = 0;
+  function aplicarFiltros() {
+    let visiveis = 0;
 
     cards.forEach((card) => {
       const titulo = card.dataset.titulo ?? "";
@@ -311,32 +333,35 @@ const niveis: Array<{ value: string; label: string }> = [
       const idade = Number(card.dataset.idade ?? 0);
       const duracao = Number(card.dataset.duracao ?? 0);
 
-      const q = state.search;
-      const matchSearch = !q ||
-        titulo.includes(q) ||
-        resumo.includes(q) ||
-        tags.includes(q) ||
-        categoria.toLowerCase().includes(q);
+      const termoBusca = estado.busca;
+      const coincideBusca =
+        !termoBusca ||
+        titulo.includes(termoBusca) ||
+        resumo.includes(termoBusca) ||
+        tags.includes(termoBusca) ||
+        categoria.toLowerCase().includes(termoBusca);
 
-      const matchCategoria = !state.categoria || categoria === state.categoria;
+      const coincideCategoria = !estado.categoria || categoria === estado.categoria;
+      const coincideNivel = !estado.nivel || nivel === estado.nivel;
+      const coincideIdade = !estado.idadeMinima || idade >= Number(estado.idadeMinima);
+      const coincideDuracao = !estado.duracao || duracao <= Number(estado.duracao);
 
-      const matchNivel = !state.nivel || nivel === state.nivel;
+      const exibir =
+        coincideBusca &&
+        coincideCategoria &&
+        coincideNivel &&
+        coincideIdade &&
+        coincideDuracao;
 
-      const matchIdade = !state.idadeMinima || idade >= Number(state.idadeMinima);
-
-      const matchDuracao = !state.duracao || duracao <= Number(state.duracao);
-
-      const show = matchSearch && matchCategoria && matchNivel && matchIdade && matchDuracao;
-
-      card.style.display = show ? "" : "none";
-      if (show) visible++;
+      card.style.display = exibir ? "" : "none";
+      if (exibir) visiveis++;
     });
 
-    countNum.textContent = String(visible);
-    countEl.textContent = `${visible} projeto${visible !== 1 ? "s" : ""} encontrado${visible !== 1 ? "s" : ""}`;
+    contadorNumero.textContent = String(visiveis);
+    contadorTexto.textContent = `${visiveis} projeto${visiveis !== 1 ? "s" : ""} encontrado${visiveis !== 1 ? "s" : ""}`;
 
-    empty.hidden = visible > 0;
-    grid.style.display = visible === 0 ? "none" : "";
+    vazio.hidden = visiveis > 0;
+    grid.style.display = visiveis === 0 ? "none" : "";
   }
 </script>
 
