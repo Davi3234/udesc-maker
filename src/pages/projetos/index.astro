@@ -26,7 +26,7 @@ interface ModuloProjeto {
 // import.meta.glob com eager:true resolve os módulos imediatamente,
 // retornando o conteúdo direto sem precisar de await por módulo.
 const arquivosProjetos = import.meta.glob<ModuloProjeto>(
-  "../../content/projects/*.md",
+  "../../content/projects/*/content.md",
   { eager: true }
 );
 

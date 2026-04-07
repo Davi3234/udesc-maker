@@ -1,13 +1,15 @@
 ---
-titulo: "Braço Robótico DIY"
-resumo: "Construa um braço articulado controlado por sensores de movimento e Arduino."
-categoria: "Robótica"
-nivel: "avançado"
+titulo: 'Braço Robótico DIY'
+descricao: 'Neste projeto você aprenderá a construir um braço robótico articulado controlado por sensores de movimento. O projeto envolve programação Arduino, eletrônica básica e montagem mecânica.'
+resumo: 'Construa um braço articulado controlado por sensores de movimento e Arduino.'
+categoria: 'Robótica'
+nivel: 'avançado'
 idadeMinima: 12
 duracao: 4
-autor: "Prof. Carlos Mendes"
-tags: ["Arduino", "Servo Motor", "Eletrônica"]
-imagem: "/images/projetos/braco-robotico.jpg"
+autor: 'Prof. Carlos Mendes'
+tags: ['Arduino', 'Servo Motor', 'Eletrônica']
+anexos: ['/content/projects/braco-robotico-diy/anexos/anexo1.pdf']
+imagem: '/images/projetos/braco-robotico.jpg'
 destaque: true
 ---
 
@@ -26,10 +28,13 @@ Neste projeto você aprenderá a construir um braço robótico articulado contro
 ## Instruções
 
 ### Passo 1 – Montagem da estrutura
+
 Monte a estrutura mecânica do braço seguindo o diagrama...
 
 ### Passo 2 – Fiação
+
 Conecte os servos ao Arduino conforme o esquema elétrico...
 
 ### Passo 3 – Programação
+
 Carregue o código no Arduino e calibre os ângulos...
