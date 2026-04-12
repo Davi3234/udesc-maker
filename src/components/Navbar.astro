@@ -1,15 +1,16 @@
 ---
 import Logo from "./Logo.astro";
+import { base } from 'astro:config/client';
 
 const navLinks = [
-  { label: "Início", href: "/" },
-  { label: "Projetos", href: "/projetos" },
+  { label: "Início", href: base},
+  { label: "Projetos", href: `${base}/projetos` },
 ];
 ---
 
 <header class="navbar">
   <div class="container navbar__inner">
-    <a href="/" class="navbar__brand">
+    <a href={base} class="navbar__brand">
       <Logo/>
       <span class="navbar__brand-name">UDESC Maker</span>
     </a>
