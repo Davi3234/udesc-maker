@@ -1,6 +1,7 @@
 ---
 import type { ProjetoCardProps } from "./ProjetoCard.astro"
 import ProjetoCard from "./ProjetoCard.astro"
+import { base } from 'astro:config/client';
 
 interface Props {
   projetos?: ProjetoCardProps[]
@@ -22,7 +23,7 @@ const {
         <h2 class="destaque__title">{titulo}</h2>
         <p class="destaque__description">{descricao}</p>
       </div>
-      <a href="/projetos" class="destaque__view-all">Ver todos os projetos</a>
+      <a href={`${base}/projetos`} class="destaque__view-all">Ver todos os projetos</a>
     </div>
 
     <div class="destaque__grid">

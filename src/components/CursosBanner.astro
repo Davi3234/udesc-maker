@@ -10,7 +10,7 @@ const {
   titulo = "Cursos Acadêmicos UDESC",
   descricao = "Nossos projetos são integrados aos currículos de Engenharia, Design e Computação. Descubra como levar a cultura maker para sua sala de aula.",
   textoBotao = "Conhecer Cursos",
-  linkBotao = "/cursos",
+  linkBotao = "https://www.udesc.br/ceavi/udesc/ibirama",
 } = Astro.props;
 ---
 
@@ -21,7 +21,7 @@ const {
       <p class="cursos-banner__description">{descricao}</p>
     </div>
 
-    <a href={linkBotao} class="cursos-banner__botao">
+    <a href={linkBotao} class="cursos-banner__botao" target="_blank">
       {textoBotao}
     </a>
   </div>

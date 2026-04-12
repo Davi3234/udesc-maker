@@ -23,8 +23,6 @@ interface ModuloProjeto {
   default: unknown;
 }
 
-// import.meta.glob com eager:true resolve os módulos imediatamente,
-// retornando o conteúdo direto sem precisar de await por módulo.
 const arquivosProjetos = import.meta.glob<ModuloProjeto>(
   "../../content/projects/*/content.md",
   { eager: true }
@@ -34,7 +32,6 @@ const projetos: ProjetoCardProps[] = Object.entries(arquivosProjetos).map(
   ([caminho, modulo]) => {
     const fm = modulo.frontmatter;
 
-    // Extrai o slug a partir do caminho do arquivo
     const slug = caminho.split("/").pop()!.replace(/\.md$/, "");
 
     return {

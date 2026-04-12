@@ -1,6 +1,7 @@
 ---
 import garotoComRobo from "../images/imagem-garoto.svg";
 import chaveInglesa from "../images/icons/chave-inglesa.svg";
+import { base } from 'astro:config/client';
 
 interface Props {
   selo?: string
@@ -41,7 +42,7 @@ const {
       <h1 class="hero__title">{titulo}</h1>
       <p class="hero__description">{descricao}</p>
 
-      <a href={linkBotao} class="hero__cta">
+      <a href={`${base}${linkBotao}`} class="hero__cta">
         {textoBotao}
       </a>
     </div>
