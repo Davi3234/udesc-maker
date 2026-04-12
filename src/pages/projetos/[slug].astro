@@ -2,6 +2,10 @@
 import Footer from "../../components/Footer.astro";
 import Navbar from "../../components/Navbar.astro";
 import MainLayout from "../../layouts/MainLayout.astro";
+import ageIcon from "./assets/ageIcon.png";
+import autorIcon from "./assets/autorIcon.png";
+import durationIcon from "./assets/durationIcon.png";
+import levelIcon from "./assets/levelIcon.png";
 
 export async function getStaticPaths() {
   const modulos = import.meta.glob<{
@@ -35,9 +39,9 @@ const fm = modulo.frontmatter;
 const conteudo = modulo.compiledContent();
 
 const NIVEL: Record<string, { label: string; cor: string }> = {
-  iniciante:    { label: "Iniciante",     cor: "var(--green-600)" },
-  intermediário: { label: "Intermediário", cor: "#d97706"          },
-  avançado:     { label: "Avançado",      cor: "var(--red-500)"   },
+  iniciante: { label: "Iniciante", cor: "var(--green-600)" },
+  intermediário: { label: "Intermediário", cor: "#d97706" },
+  avançado: { label: "Avançado", cor: "var(--red-500)" },
 };
 const nivel = NIVEL[fm.nivel ?? ""] ?? NIVEL.iniciante;
 
@@ -61,49 +65,64 @@ function fmtDuracao(h: number) {
   <main class="project-detail-main">
     <section class="project-detail-section">
       <nav class="project-detail-nav">
-          <a class="project-detail-anchor" href="/udesc-maker">Início</a> / 
-          <a class="project-detail-anchor" href="/udesc-maker/projetos">Projetos</a> /
-          <p class="project-detail-current-project">{fm.titulo}</p>
-        </nav>
+        <a class="project-detail-anchor" href="/udesc-maker">Início</a> /
+        <a class="project-detail-anchor" href="/udesc-maker/projetos"
+          >Projetos</a
+        > /
+        <p class="project-detail-current-project">{fm.titulo}</p>
+      </nav>
 
-        <h1 class="project-detail-title">{fm.titulo}</h1>
-        <div class="project-detail-badges">
-          <span class="project-detail-categoria">{fm.categoria}</span>
-          {(fm.tags?.length ?? 0) > 0 && (
-          <ul class="project-detail-tag-list" aria-label="Tags do projeto">
-            {fm.tags!.map((t) => <li class="project-detail-tag">{t}</li>)}
-          </ul>
-        )}
-        </div>
-        <p class="project-detail-resumo">{fm.resumo}</p>
+      <h1 class="project-detail-title">{fm.titulo}</h1>
+      <div class="project-detail-badges">
+        <span class="project-detail-categoria">{fm.categoria}</span>
+        {
+          (fm.tags?.length ?? 0) > 0 && (
+            <ul class="project-detail-tag-list" aria-label="Tags do projeto">
+              {fm.tags!.map((t) => (
+                <li class="project-detail-tag">{t}</li>
+              ))}
+            </ul>
+          )
+        }
+      </div>
+      <p class="project-detail-resumo">{fm.resumo}</p>
     </section>
     <section class="project-detail-section">
-        <div class="projeto-detail-img-wrapper">
-          <img class="project-detail-img" src={fm.imagem} alt={fm.titulo ?? "Imagem do projeto"} 
-            width="1000" height="480"/>
-        </div>  
-        <div class="project-detail-info-container">
-          <div class="project-detail-info-card">
-            <img src="../projetos/assets/" alt="Imagem do autor" />
-            <h4 class="project-detail-info-card-title">Autor</h4>
-            <p class="project-detail-info-card-content"><b>{fm.autor}</b></p>
-          </div>
-          <div class="project-detail-info-card">
-            <img src="../projetos/assets/" alt="Imagem da idade mínima" />
-            <h4 class="project-detail-info-card-title">Idade Mínima</h4>
-            <p class="project-detail-info-card-content"><b>{fm.idadeMinima}+ anos</b></p>
-          </div>
-          <div class="project-detail-info-card">
-            <img src="../projetos/assets/durationIcon.png" alt="Imagem da duração" />
-            <h4 class="project-detail-info-card-title">Duração</h4>
-            <p class="project-detail-info-card-content"><b>{fmtDuracao(fm.duracao ?? 0)}</b></p>
-          </div>
-          <div class="project-detail-info-card">
-            <img src="../projetos/assets/levelIcon.png" alt="Imagem do nível de dificuldade" />
-            <h4 class="project-detail-info-card-title">Nível</h4>
-            <p class="project-detail-info-card-content"><b>{nivel.label}</b></p>
-          </div>
+      <div class="projeto-detail-img-wrapper">
+        <img
+          class="project-detail-img"
+          src={fm.imagem}
+          alt={fm.titulo ?? "Imagem do projeto"}
+          width="1000"
+          height="480"
+        />
+      </div>
+      <div class="project-detail-info-container">
+        <div class="project-detail-info-card">
+          <img src={autorIcon.src} alt="Imagem do autor" />
+          <h4 class="project-detail-info-card-title">Autor</h4>
+          <p class="project-detail-info-card-content"><b>{fm.autor}</b></p>
         </div>
+        <div class="project-detail-info-card">
+          <img src={ageIcon.src} alt="Imagem da idade mínima" />
+          <h4 class="project-detail-info-card-title">Idade Mínima</h4>
+          <p class="project-detail-info-card-content">
+            <b>{fm.idadeMinima}+ anos</b>
+          </p>
+        </div>
+        <div class="project-detail-info-card">
+          <img src={durationIcon.src} alt="Imagem da duração" />
+          <h4 class="project-detail-info-card-title">Duração</h4>
+          <p class="project-detail-info-card-content">
+            <b>{fmtDuracao(fm.duracao ?? 0)}</b>
+          </p>
+        </div>
+        <div class="project-detail-info-card">
+          <img src={levelIcon.src} alt="Imagem do nível de dificuldade" />
+          <h4 class="project-detail-info-card-title">Nível</h4>
+          <p class="project-detail-info-card-content"><b>{nivel.label}</b></p>
+        </div>
+      </div>
     </section>
     <section class="project-detail-section">
       <article class="prose" set:html={conteudo} />
@@ -114,7 +133,6 @@ function fmtDuracao(h: number) {
 </MainLayout>
 
 <style>
-
   .project-detail-main {
     width: 100%;
     margin: 0 auto;
@@ -148,7 +166,7 @@ function fmtDuracao(h: number) {
     font-size: clamp(1.8rem, 4vw, 2.6rem);
     font-weight: 800;
     color: var(--black-900);
-    letter-spacing: -.02em;
+    letter-spacing: -0.02em;
     line-height: 1.2;
     margin-bottom: 12px;
   }
@@ -160,20 +178,21 @@ function fmtDuracao(h: number) {
     margin-bottom: 24px;
   }
 
-  .project-detail-tag-list { 
+  .project-detail-tag-list {
     display: flex;
     flex-wrap: wrap;
     gap: 8px;
     list-style: none;
   }
 
-  .project-detail-tag, .project-detail-categoria {
+  .project-detail-tag,
+  .project-detail-categoria {
     padding: 4px 12px;
     border-radius: 999px;
     background: var(--green-100);
     color: var(--green-700);
     font-family: var(--font-display);
-    font-size: .75rem;
+    font-size: 0.75rem;
     font-weight: 600;
   }
 
@@ -184,7 +203,7 @@ function fmtDuracao(h: number) {
     max-width: 62ch;
     margin-bottom: 24px;
   }
-  
+
   .project-detail-img {
     width: 100%;
     max-width: 1140px;
@@ -195,8 +214,8 @@ function fmtDuracao(h: number) {
     box-shadow: var(--shadow-md);
   }
 
-  .projeto-detail-img-wrapper { 
-    padding-block: 32px; 
+  .projeto-detail-img-wrapper {
+    padding-block: 32px;
   }
 
   .project-detail-info-container {
@@ -222,7 +241,7 @@ function fmtDuracao(h: number) {
 
   .project-detail-info-card-title {
     font-family: var(--font-display);
-    font-size: .9rem;
+    font-size: 0.9rem;
     font-weight: 600;
     color: var(--gray-500);
     margin-top: 12px;
@@ -235,32 +254,52 @@ function fmtDuracao(h: number) {
   }
 
   .prose {
+    margin-top: 80px;
     max-width: 72ch;
     color: var(--gray-700);
     line-height: 1.8;
     font-size: 1rem;
+    counter-reset: step-counter;
   }
   .prose :global(h2) {
     font-family: var(--font-display);
     font-weight: 600;
     color: var(--gray-900);
-    padding-bottom: .4em;
-    border-left: 8px solid var(--green-500);
+    padding-bottom: 0.4em;
+    border-left: 8px solid var(--green-700);
     border-radius: 8px;
     padding-left: 8px;
-    margin: 16px 0 8px 0;
+    margin: 40px 0 8px 0;
   }
   .prose :global(h3) {
-    font-family: var(--font-display);
-    font-size: 1.1rem;
+    counter-increment: step-counter;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    font-size: 1.25rem;
     font-weight: 700;
-    color: var(--gray-900);
-    margin-block: 1.6em .5em;
+    color: #111827;
+    margin-top: 40px;
   }
-  .prose :global(p)  { 
+
+  .prose :global(h3)::before {
+    content: counter(step-counter);
+    background-color: #064e3b;
+    color: white;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.9rem;
+    flex-shrink: 0;
+  }
+  .prose :global(p) {
+    padding-left: 48px;
     margin-bottom: 1.1em;
     color: var(--gray-500);
-   }
+  }
   .prose :global(ul),
   .prose :global(ol) {
     display: flex;
@@ -272,22 +311,29 @@ function fmtDuracao(h: number) {
   }
   .prose :global(li) {
     width: 360px;
-    height: 60px;
-    padding-left: 8px;
-    color: var(--gray-900);
+    height: max-content;
+    min-height: 60px;
+    padding: 2% 0 0 8px;
+    color: #334155;
+    font-size: 16px;
+    font-weight: 500;
     border-bottom: 1px solid var(--gray-200);
     border-radius: 8px;
     background-color: white;
     list-style-type: none;
+    border: 0px solid transparent;
   }
-  /* .prose :global(strong) { font-weight: 700; color: var(--gray-900); } */
-  /* .prose :global(code) {
+  .prose :global(strong) {
+    font-weight: 700;
+    color: var(--gray-900);
+  }
+  .prose :global(code) {
     background: var(--gray-100);
-    padding: .15em .4em;
+    padding: 0.15em 0.4em;
     border-radius: 4px;
-    font-size: .875em;
+    font-size: 0.875em;
     font-family: monospace;
-  } */
+  }
   .prose :global(pre) {
     background: var(--gray-900);
     color: var(--gray-100);
@@ -296,5 +342,8 @@ function fmtDuracao(h: number) {
     overflow-x: auto;
     margin-block: 1.2em;
   }
-  .prose :global(pre code) { background: none; padding: 0; }
+  .prose :global(pre code) {
+    background: none;
+    padding: 0;
+  }
 </style>
