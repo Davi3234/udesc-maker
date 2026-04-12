@@ -1,0 +1,115 @@
+---
+import Footer from "../../components/Footer.astro";
+import Navbar from "../../components/Navbar.astro";
+import MainLayout from "../../layouts/MainLayout.astro";
+
+export async function getStaticPaths() {
+  const modulos = import.meta.glob<{
+    frontmatter: Record<string, unknown>;
+    compiledContent: () => string;
+  }>("../../content/projects/*.md", { eager: true });
+
+  return Object.entries(modulos).map(([caminho, modulo]) => ({
+    params: { slug: caminho.split("/").pop()!.replace(/\.md$/, "") },
+    props: { modulo },
+  }));
+}
+
+interface Frontmatter {
+  titulo?: string;
+  resumo?: string;
+  categoria?: string;
+  nivel?: string;
+  idadeMinima?: number;
+  duracao?: number;
+  autor?: string;
+  tags?: string[];
+  imagem?: string;
+}
+
+const { modulo } = Astro.props as {
+  modulo: { frontmatter: Frontmatter; compiledContent: () => string };
+};
+
+const fm = modulo.frontmatter;
+const conteudo = modulo.compiledContent();
+
+const NIVEL: Record<string, { label: string; cor: string }> = {
+  iniciante:    { label: "Iniciante",     cor: "var(--green-600)" },
+  intermediário: { label: "Intermediário", cor: "#d97706"          },
+  avançado:     { label: "Avançado",      cor: "var(--red-500)"   },
+};
+const nivel = NIVEL[fm.nivel ?? ""] ?? NIVEL.iniciante;
+
+// const ICONE_CAT: Record<string, string> = {
+//   "Robótica": "🤖", "Eletrônica": "⚡", "Fabricação 3D": "🖨️",
+//   "IoT & Sensores": "📡", "Aeroespacial": "🚀", "Programação": "💻",
+// };
+
+function fmtDuracao(h: number) {
+  if (h < 1) return `${Math.round(h * 60)} min`;
+  return h === 1 ? "1 hora" : `${h} horas`;
+}
+---
+
+<MainLayout
+  titulo={`${fm.titulo ?? "Projeto"} — UDESC Maker`}
+  descricao={fm.resumo}
+>
+  <Navbar />
+
+  <main class="project-detail-main">
+    <section class="project-detail-section">
+      <nav class="project-detail-nav">
+          <a class="project-detail-anchor" href="/udesc-maker">Início</a> / 
+          <a class="project-detail-anchor" href="/udesc-maker/projetos">Projetos</a> /
+          <p class="project-detail-current-project">{fm.titulo}</p>
+        </nav>
+
+        <h1 class="project-detail-title">{fm.titulo}</h1>
+        <div class="project-detail-badges">
+          <span class="project-detail-categoria">{fm.categoria}</span>
+          {(fm.tags?.length ?? 0) > 0 && (
+          <ul class="project-detail-tag-list" aria-label="Tags do projeto">
+            {fm.tags!.map((t) => <li class="project-detail-tag">{t}</li>)}
+          </ul>
+        )}
+        </div>
+        <p class="project-detail-resumo">{fm.resumo}</p>
+    </section>
+    <section class="project-detail-section">
+        <div class="projeto-detail-img-wrapper">
+          <img class="project-detail-img" src={fm.imagem} alt={fm.titulo ?? "Imagem do projeto"} 
+            width="1140" height="480"/>
+        </div>  
+        <div class="project-detail-info-container">
+          <div class="project-detail-info-card">
+            <img src="../projetos/assets/" alt="Imagem do autor" />
+            <h4 class="project-detail-info-card-title">Autor</h4>
+            <p class="project-detail-info-card-content">{fm.autor}</p>
+          </div>
+          <div class="project-detail-info-card">
+            <img src="../projetos/assets/" alt="Imagem da idade mínima" />
+            <h4 class="project-detail-info-card-title">Idade Mínima</h4>
+            <p class="project-detail-info-card-content">{fm.idadeMinima}+ anos</p>
+          </div>
+          <div class="project-detail-info-card">
+            <img src="../projetos/assets/durationIcon.png" alt="Imagem da duração" />
+            <h4 class="project-detail-info-card-title">Duração</h4>
+            <p class="project-detail-info-card-content">{fmtDuracao(fm.duracao ?? 0)}</p>
+          </div>
+          <div class="project-detail-info-card">
+            <img src="../projetos/assets/levelIcon.png" alt="Imagem do nível de dificuldade" />
+            <h4 class="project-detail-info-card-title">Nível</h4>
+            <p class="project-detail-info-card-content">{nivel.label}</p>
+          </div>
+        </div>
+    </section>
+    <section class="project-detail-section">
+      <article class="prose" set:html={conteudo} />
+    </section>
+  </main>
+
+  <Footer />
+</MainLayout>
+
