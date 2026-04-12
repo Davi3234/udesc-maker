@@ -1,5 +1,6 @@
 ---
 import type { ProjetoLevel } from '../domain/interfaces/Projeto';
+import { base } from 'astro:config/client';
 
 export interface ProjetoCardProps {
   slug: string
@@ -107,7 +108,7 @@ function formatDuracao(h: number) {
       </span>
     </div>
 
-    <a href={`/projetos/${slug}`} class="projeto-card__cta">
+    <a href={`${base}/projetos/${slug}`} class="projeto-card__cta">
       Ver detalhes
       <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
         <path d="M5 12h14M12 5l7 7-7 7"/>
