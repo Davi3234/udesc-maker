@@ -5,9 +5,17 @@ import Hero from "../components/Hero.astro"
 import Navbar from "../components/Navbar.astro"
 import ProjetosDestaque from "../components/ProjetosDestaque.astro"
 import type { Projeto } from "../domain/interfaces/Projeto"
+import { filterItems } from "../helpers/filter"
 import MainLayout from "../layouts/MainLayout.astro"
+import { ProjetoService } from "../services/projeto.service"
 
-const destaques: Projeto[] = []
+const projetoService = new ProjetoService()
+
+const projetos = await projetoService.listAll();
+
+const destaques: Projeto[] = filterItems(projetos, [
+  { field: 'destaque', operator: 'eq', value: true }
+])
 ---
 <MainLayout
   titulo="UDESC Maker — Explore projetos maker e aprenda criando"

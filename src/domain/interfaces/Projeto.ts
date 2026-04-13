@@ -18,4 +18,5 @@ export interface Projeto {
   duracao?: number
   autor: string
   imagem?: ImageData
+  destaque?: boolean
 }
