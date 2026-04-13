@@ -5,8 +5,6 @@ import ProjetoCard from "../../components/ProjetoCard.astro";
 import MainLayout from "../../layouts/MainLayout.astro";
 import { ProjetoService } from "../../services/projeto.service";
 
-const query = Astro.url.searchParams.get('q') ?? '';
-
 const projetoService = new ProjetoService()
 
 const projetos = await projetoService.listAll();
@@ -24,7 +22,7 @@ const niveis: Array<{ value: string; label: string }> = [
   titulo="Projetos — UDESC Maker"
   descricao="Explore todos os projetos maker disponíveis na plataforma UDESC Maker."
 >
-  <Navbar query={query} />
+  <Navbar />
 
   <main class="projetos-page">
     <section class="projetos-header">
@@ -208,8 +206,11 @@ import { filterItems } from "../../helpers/filter";
       aplicarFiltros();
     });
 
-    if (campoBusca.value) {
-      estado.busca = campoBusca.value.trim().toLowerCase();
+    const query = new URLSearchParams(window.location.search).get('q')
+
+    if (query) {
+      campoBusca.value = query
+      estado.busca = query.trim().toLowerCase();
 
       aplicarFiltros()
     }
