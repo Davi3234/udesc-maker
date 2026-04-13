@@ -1,13 +1,13 @@
 ---
-titulo: "Lanterna Mágica"
-resumo: "Aprenda os princípios fundamentais dos circuitos elétricos criando sua própria lanterna."
-categoria: "Eletrônica"
-nivel: "iniciante"
+titulo: 'Lanterna Mágica'
+resumo: 'Aprenda os princípios fundamentais dos circuitos elétricos criando sua própria lanterna.'
+categoria: 'Eletrônica'
+level: 'iniciante'
 idadeMinima: 8
 duracao: 1
-autor: "Profa. Ana Lima"
-tags: ["Circuitos", "LED", "Bateria"]
-imagem: "/images/projetos/lanterna-magica.jpg"
+autor: 'Profa. Ana Lima'
+tags: ['Circuitos', 'LED', 'Bateria']
+imagem: './thumbnail.jpg'
 destaque: true
 ---
 

@@ -1,13 +1,13 @@
 ---
-titulo: "Horta Automática"
-resumo: "Sistema de monitoramento de umidade do solo com rega automática via Wi-Fi."
-categoria: "IoT & Sensores"
-nivel: "avançado"
+titulo: 'Horta Automática'
+resumo: 'Sistema de monitoramento de umidade do solo com rega automática via Wi-Fi.'
+categoria: 'IoT & Sensores'
+level: 'avançado'
 idadeMinima: 14
 duracao: 6
-autor: "Prof. João Costa"
-tags: ["ESP32", "Sensores", "Automação"]
-imagem: "/images/projetos/horta-automatica.jpg"
+autor: 'Prof. João Costa'
+tags: ['ESP32', 'Sensores', 'Automação']
+imagem: './thumbnail.jpg'
 destaque: false
 ---
 

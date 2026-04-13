@@ -1,13 +1,13 @@
 ---
-titulo: "Chaveiro de Engrenagem"
-resumo: "Modelagem 3D básica para criar um chaveiro funcional com engrenagens móveis."
-categoria: "Fabricação 3D"
-nivel: "intermediário"
+titulo: 'Chaveiro de Engrenagem'
+resumo: 'Modelagem 3D básica para criar um chaveiro funcional com engrenagens móveis.'
+categoria: 'Fabricação 3D'
+level: 'intermediário'
 idadeMinima: 10
 duracao: 2
-autor: "Prof. Ricardo Silva"
-tags: ["Tinkercad", "Impressão 3D", "Mecânica"]
-imagem: "/images/projetos/chaveiro-engrenagem.jpg"
+autor: 'Prof. Ricardo Silva'
+tags: ['Tinkercad', 'Impressão 3D', 'Mecânica']
+imagem: './thumbnail.jpg'
 destaque: true
 ---
 
