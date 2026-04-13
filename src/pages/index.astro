@@ -30,4 +30,20 @@ const destaques: Projeto[] = filterItems(projetos, [
   </main>
 
   <Footer />
+
+  <script>
+    const input = document.getElementById('search') as HTMLInputElement;
+
+    input.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') {
+        const query = input.value.trim();
+
+        if (!query) {
+          return;
+        }
+
+        window.location.href = `/udesc-maker/projetos?q=${encodeURIComponent(query)}`;
+      }
+    });
+  </script>
 </MainLayout>
