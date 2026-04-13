@@ -151,6 +151,20 @@ const niveis: Array<{ value: string; label: string }> = [
 </MainLayout>
 
 <script>
+  import type { Filter } from "../../helpers/filter";
+import { filterItems } from "../../helpers/filter";
+
+  interface ProjetoCard {
+    element: HTMLElement;
+    titulo: string;
+    resumo: string;
+    tags: string;
+    categoria: string;
+    level: string;
+    idade: number;
+    duracao: number;
+  }
+
   interface EstadoFiltros {
     busca: string;
     categoria: string;
@@ -171,9 +185,21 @@ const niveis: Array<{ value: string; label: string }> = [
   const vazio = document.getElementById("projetos-empty") as HTMLElement;
   const contadorNumero = document.getElementById("count-num")!;
   const contadorTexto = document.getElementById("projetos-count")!;
-  const cards = Array.from(grid.querySelectorAll<HTMLElement>(".projeto-card-wrapper"));
+
+  const projetoCards: ProjetoCard[] = Array.from(grid.querySelectorAll<HTMLElement>(".projeto-card-wrapper"))
+    .map((card) => ({
+      element: card,
+      titulo: card.dataset.titulo ?? "",
+      resumo: card.dataset.resumo ?? "",
+      tags: card.dataset.tags ?? "",
+      categoria: card.dataset.categoria ?? "",
+      level: card.dataset.level ?? "",
+      idade: Number(card.dataset.idade ?? 0),
+      duracao: Number(card.dataset.duracao ?? 0),
+    }));
 
   const campoBusca = document.querySelector<HTMLInputElement>("#search");
+
   if (campoBusca) {
     campoBusca.addEventListener("input", () => {
       estado.busca = campoBusca.value.trim().toLowerCase();
@@ -188,6 +214,7 @@ const niveis: Array<{ value: string; label: string }> = [
       evento.stopPropagation();
 
       const estaAberto = botao.getAttribute("aria-expanded") === "true";
+
       fecharTodosDropdowns();
 
       if (!estaAberto) {
@@ -196,6 +223,7 @@ const niveis: Array<{ value: string; label: string }> = [
     });
 
     const itens = botao.querySelectorAll<HTMLElement>(".filtro-dropdown__item");
+
     itens.forEach((item) => {
       item.addEventListener("click", (evento) => {
         evento.stopPropagation();
@@ -207,6 +235,7 @@ const niveis: Array<{ value: string; label: string }> = [
         item.classList.add("filtro-dropdown__item--active");
 
         estado[chaveFiltro] = valor;
+
         atualizarRotuloBotao(botao, item.textContent ?? "", valor);
         fecharTodosDropdowns();
         aplicarFiltros();
@@ -256,14 +285,14 @@ const niveis: Array<{ value: string; label: string }> = [
       botao.classList.remove("filtro-btn--active");
 
       const chaveFiltro = botao.dataset.filter ?? "";
-      const nosTexto = Array.from(botao.childNodes).filter(
-        (n) => n.nodeType === Node.TEXT_NODE && n.textContent?.trim()
-      );
-      nosTexto.forEach((n) => {
-        n.textContent = ` ${rotulosPadrao[chaveFiltro] ?? ""} `;
-      });
+
+      const nosTexto = Array.from(botao.childNodes)
+        .filter((n) => n.nodeType === Node.TEXT_NODE && n.textContent?.trim());
+
+      nosTexto.forEach((n) => (n.textContent = ` ${rotulosPadrao[chaveFiltro] ?? ""} `));
 
       const itens = botao.querySelectorAll<HTMLElement>(".filtro-dropdown__item");
+
       itens.forEach((item, indice) => {
         item.classList.toggle("filtro-dropdown__item--active", indice === 0);
       });
@@ -275,47 +304,51 @@ const niveis: Array<{ value: string; label: string }> = [
   document.getElementById("limpar-filtros")?.addEventListener("click", limparTodosFiltros);
   document.getElementById("limpar-filtros-empty")?.addEventListener("click", limparTodosFiltros);
 
+
   function aplicarFiltros() {
-    let visiveis = 0;
+    const filtros: Filter<ProjetoCard>[] = [];
 
-    cards.forEach((card) => {
-      const titulo = card.dataset.titulo ?? "";
-      const resumo = card.dataset.resumo ?? "";
-      const tags = card.dataset.tags ?? "";
-      const categoria = card.dataset.categoria ?? "";
-      const level = card.dataset.level ?? "";
-      const idade = Number(card.dataset.idade ?? 0);
-      const duracao = Number(card.dataset.duracao ?? 0);
+    if (estado.busca) {
+      filtros.push({
+        OR: [
+          { field: "titulo", operator: "contains", value: estado.busca },
+          { field: "resumo", operator: "contains", value: estado.busca },
+          { field: "tags", operator: "contains", value: estado.busca },
+          { field: "categoria", operator: "contains", value: estado.busca },
+        ]
+      });
+    }
 
-      const termoBusca = estado.busca;
-      const coincideBusca =
-        !termoBusca ||
-        titulo.includes(termoBusca) ||
-        resumo.includes(termoBusca) ||
-        tags.includes(termoBusca) ||
-        categoria.toLowerCase().includes(termoBusca);
+    if (estado.categoria) {
+      filtros.push({ field: "categoria", operator: "eq", value: estado.categoria });
+    }
+    if (estado.level) {
+      filtros.push({ field: "level", operator: "eq", value: estado.level });
+    }
+    if (estado.idadeMinima) {
+      filtros.push({ field: "idade", operator: "gte", value: Number(estado.idadeMinima) });
+    }
+    if (estado.duracao) {
+      filtros.push({ field: "duracao", operator: "lte", value: Number(estado.duracao) });
+    }
 
-      const coincideCategoria = !estado.categoria || categoria === estado.categoria;
-      const coincideLevel = !estado.level || level === estado.level;
-      const coincideIdade = !estado.idadeMinima || idade >= Number(estado.idadeMinima);
-      const coincideDuracao = !estado.duracao || duracao <= Number(estado.duracao);
+    const resultado = filterItems(projetoCards, filtros);
+    atualizarDOM(resultado);
+  }
 
-      const exibir =
-        coincideBusca &&
-        coincideCategoria &&
-        coincideLevel &&
-        coincideIdade &&
-        coincideDuracao;
+  function atualizarDOM(visiveis: ProjetoCard[]) {
+    const conjuntoVisiveis = new Set(visiveis.map((p) => p.element));
 
-      card.style.display = exibir ? "" : "none";
-      if (exibir) visiveis++;
+    projetoCards.forEach(({ element }) => {
+      element.style.display = conjuntoVisiveis.has(element) ? "" : "none";
     });
 
-    contadorNumero.textContent = String(visiveis);
-    contadorTexto.textContent = `${visiveis} projeto${visiveis !== 1 ? "s" : ""} encontrado${visiveis !== 1 ? "s" : ""}`;
+    const total = visiveis.length;
 
-    vazio.hidden = visiveis > 0;
-    grid.style.display = visiveis === 0 ? "none" : "";
+    contadorNumero.textContent = `${total}`;
+    contadorTexto.textContent = `${total} projeto${total !== 1 ? "s" : ""} encontrado${total !== 1 ? "s" : ""}`;
+    vazio.hidden = total > 0;
+    grid.style.display = total === 0 ? "none" : "";
   }
 </script>
 
