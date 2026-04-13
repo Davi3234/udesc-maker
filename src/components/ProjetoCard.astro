@@ -1,25 +1,8 @@
 ---
-import type { ProjetoLevel } from '../domain/interfaces/Projeto';
 import { base } from 'astro:config/client';
+import { ProjetoLevel, type Projeto } from '../domain/interfaces/Projeto';
 
-export interface ProjetoCardProps {
-  slug: string
-  titulo: string
-  resumo: string
-  descricao?: string
-  level: ProjetoLevel
-  categoria: string
-  tags: string[]
-  idadeMinima: number
-  duracao: number
-  autor: string
-  imagem: {
-    src: string
-    alt?: string
-  }
-}
-
-interface Props extends ProjetoCardProps {}
+interface Props extends Projeto {}
 
 const {
   slug,
@@ -30,7 +13,7 @@ const {
   tags = [],
   idadeMinima,
   duracao,
-  imagem: { src: imagemSrc, alt: imageAlt = '' },
+  imagem: { src: imagemSrc } = {},
 } = Astro.props
 
 const levelConfig: Record<ProjetoLevel, { label: string; color: string; bg: string }> = {
@@ -62,7 +45,7 @@ function formatDuracao(h: number) {
   <div class="projeto-card__image-wrapper">
     <img
       src={imagemSrc}
-      alt={imageAlt ?? titulo}
+      alt={titulo}
       class="projeto-card__image"
       width="400"
       height="240"
@@ -100,7 +83,7 @@ function formatDuracao(h: number) {
       </span>
       <span class="projeto-card__meta-item" title="Duração estimada">
         <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
-        {formatDuracao(duracao)}
+        {duracao && formatDuracao(duracao)}
       </span>
       <span class="projeto-card__meta-item" title="Nível de dificuldade">
         <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>

@@ -1,10 +1,10 @@
 ---
-import type { ProjetoCardProps } from "./ProjetoCard.astro"
-import ProjetoCard from "./ProjetoCard.astro"
 import { base } from 'astro:config/client';
+import type { Projeto } from "../domain/interfaces/Projeto";
+import ProjetoCard from "./ProjetoCard.astro";
 
 interface Props {
-  projetos?: ProjetoCardProps[]
+  projetos?: Projeto[]
   titulo?: string
   descricao?: string
 }
