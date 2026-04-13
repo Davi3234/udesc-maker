@@ -1,98 +1,83 @@
 ---
 import Footer from "../../components/Footer.astro";
 import Navbar from "../../components/Navbar.astro";
+import { ProjetoLevel } from "../../domain/interfaces/Projeto";
 import MainLayout from "../../layouts/MainLayout.astro";
+import { ProjetoService } from "../../services/projeto.service";
 import ageIcon from "./assets/ageIcon.png";
 import autorIcon from "./assets/autorIcon.png";
 import durationIcon from "./assets/durationIcon.png";
 import levelIcon from "./assets/levelIcon.png";
 
+const projetoService = new ProjetoService()
+
 export async function getStaticPaths() {
-  const modulos = import.meta.glob<{
-    frontmatter: Record<string, unknown>;
-    compiledContent: () => string;
-  }>("../../content/projects/*.md", { eager: true });
+  const projetoService = new ProjetoService()
 
-  return Object.entries(modulos).map(([caminho, modulo]) => ({
-    params: { slug: caminho.split("/").pop()!.replace(/\.md$/, "") },
-    props: { modulo },
-  }));
+  const posts = await projetoService.listAll()
+
+  return posts
+    .filter(projeto => projeto.slug)
+    .map(projeto => ({
+      params: { slug: projeto.slug }
+    }));
 }
 
-interface Frontmatter {
-  titulo?: string;
-  resumo?: string;
-  categoria?: string;
-  nivel?: string;
-  idadeMinima?: number;
-  duracao?: number;
-  autor?: string;
-  tags?: string[];
-  imagem?: string;
-}
+const { slug } = Astro.params;
 
-const { modulo } = Astro.props as {
-  modulo: { frontmatter: Frontmatter; compiledContent: () => string };
+const { data: projeto, body } = await projetoService.get(slug);
+
+const LEVEL: Record<string, { label: string; cor: string }> = {
+  [ProjetoLevel.Iniciante]: { label: "Iniciante", cor: "var(--green-600)" },
+  [ProjetoLevel.Intermediario]: { label: "Intermediário", cor: "#d97706" },
+  [ProjetoLevel.Avancado]: { label: "Avançado", cor: "var(--red-500)" },
 };
 
-const fm = modulo.frontmatter;
-const conteudo = modulo.compiledContent();
+const level = LEVEL[projeto.level ?? ""] ?? LEVEL.iniciante;
 
-const NIVEL: Record<string, { label: string; cor: string }> = {
-  iniciante: { label: "Iniciante", cor: "var(--green-600)" },
-  intermediário: { label: "Intermediário", cor: "#d97706" },
-  avançado: { label: "Avançado", cor: "var(--red-500)" },
-};
-const nivel = NIVEL[fm.nivel ?? ""] ?? NIVEL.iniciante;
-
-// const ICONE_CAT: Record<string, string> = {
-//   "Robótica": "🤖", "Eletrônica": "⚡", "Fabricação 3D": "🖨️",
-//   "IoT & Sensores": "📡", "Aeroespacial": "🚀", "Programação": "💻",
-// };
-
-function fmtDuracao(h: number) {
+function formatarDuracao(h: number) {
   if (h < 1) return `${Math.round(h * 60)} min`;
   return h === 1 ? "1 hora" : `${h} horas`;
 }
 ---
 
 <MainLayout
-  titulo={`${fm.titulo ?? "Projeto"} — UDESC Maker`}
-  descricao={fm.resumo}
+  titulo={`${projeto.titulo ?? "Projeto"} — UDESC Maker`}
+  descricao={projeto.resumo}
 >
   <Navbar />
 
-  <main class="project-detail-main">
+  <main class="container project-detail-main">
     <section class="project-detail-section">
       <nav class="project-detail-nav">
         <a class="project-detail-anchor" href="/udesc-maker">Início</a> /
         <a class="project-detail-anchor" href="/udesc-maker/projetos"
           >Projetos</a
         > /
-        <p class="project-detail-current-project">{fm.titulo}</p>
+        <p class="project-detail-current-project">{projeto.titulo}</p>
       </nav>
 
-      <h1 class="project-detail-title">{fm.titulo}</h1>
+      <h1 class="project-detail-title">{projeto.titulo}</h1>
       <div class="project-detail-badges">
-        <span class="project-detail-categoria">{fm.categoria}</span>
+        <span class="project-detail-categoria">{projeto.categoria}</span>
         {
-          (fm.tags?.length ?? 0) > 0 && (
+          (projeto.tags?.length ?? 0) > 0 && (
             <ul class="project-detail-tag-list" aria-label="Tags do projeto">
-              {fm.tags!.map((t) => (
+              {projeto.tags!.map((t) => (
                 <li class="project-detail-tag">{t}</li>
               ))}
             </ul>
           )
         }
       </div>
-      <p class="project-detail-resumo">{fm.resumo}</p>
+      <p class="project-detail-resumo">{projeto.resumo}</p>
     </section>
     <section class="project-detail-section">
       <div class="projeto-detail-img-wrapper">
         <img
           class="project-detail-img"
-          src={fm.imagem}
-          alt={fm.titulo ?? "Imagem do projeto"}
+          src={projeto.imagem?.src}
+          alt={projeto.titulo ?? "Imagem do projeto"}
           width="1000"
           height="480"
         />
@@ -101,31 +86,31 @@ function fmtDuracao(h: number) {
         <div class="project-detail-info-card">
           <img src={autorIcon.src} alt="Imagem do autor" />
           <h4 class="project-detail-info-card-title">Autor</h4>
-          <p class="project-detail-info-card-content"><b>{fm.autor}</b></p>
+          <p class="project-detail-info-card-content"><b>{projeto.autor}</b></p>
         </div>
         <div class="project-detail-info-card">
           <img src={ageIcon.src} alt="Imagem da idade mínima" />
           <h4 class="project-detail-info-card-title">Idade Mínima</h4>
           <p class="project-detail-info-card-content">
-            <b>{fm.idadeMinima}+ anos</b>
+            <b>{projeto.idadeMinima}+ anos</b>
           </p>
         </div>
         <div class="project-detail-info-card">
           <img src={durationIcon.src} alt="Imagem da duração" />
           <h4 class="project-detail-info-card-title">Duração</h4>
           <p class="project-detail-info-card-content">
-            <b>{fmtDuracao(fm.duracao ?? 0)}</b>
+            <b>{formatarDuracao(projeto.duracao ?? 0)}</b>
           </p>
         </div>
         <div class="project-detail-info-card">
           <img src={levelIcon.src} alt="Imagem do nível de dificuldade" />
           <h4 class="project-detail-info-card-title">Nível</h4>
-          <p class="project-detail-info-card-content"><b>{nivel.label}</b></p>
+          <p class="project-detail-info-card-content"><b>{level.label}</b></p>
         </div>
       </div>
     </section>
     <section class="project-detail-section">
-      <article class="prose" set:html={conteudo} />
+      <article class="prose" set:html={body?.html} />
     </section>
   </main>
 
@@ -134,11 +119,8 @@ function fmtDuracao(h: number) {
 
 <style>
   .project-detail-main {
-    width: 100%;
-    margin: 0 auto;
-    background: var(--gray-50);
-    border-bottom: 1px solid var(--gray-100);
-    padding: 40px 8% 0 8%;
+    padding: 2rem;
+    background: var(--white);
   }
 
   .project-detail-nav {
@@ -257,8 +239,7 @@ function fmtDuracao(h: number) {
 
   .prose {
     margin-top: 80px;
-    width: 1140px;
-    max-width: 80%;
+    width: 100%;
     color: var(--gray-700);
     line-height: 1.8;
     font-size: 1rem;
