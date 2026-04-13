@@ -1,58 +1,16 @@
 ---
 import Footer from "../../components/Footer.astro";
 import Navbar from "../../components/Navbar.astro";
-import type { ProjetoCardProps } from "../../components/ProjetoCard.astro";
 import ProjetoCard from "../../components/ProjetoCard.astro";
 import MainLayout from "../../layouts/MainLayout.astro";
+import { ProjetoService } from "../../services/projeto.service";
 
-interface FrontmatterProjeto {
-  titulo?: string;
-  resumo?: string;
-  descricao?: string;
-  nivel?: ProjetoCardProps["level"];
-  categoria?: string;
-  tags?: string[];
-  idadeMinima?: number;
-  duracao?: number;
-  autor?: string;
-  imagem?: string;
-}
+const projetoService = new ProjetoService()
 
-interface ModuloProjeto {
-  frontmatter: FrontmatterProjeto;
-  default: unknown;
-}
+const projetos = await projetoService.listAll();
 
-const arquivosProjetos = import.meta.glob<ModuloProjeto>(
-  "../../content/projects/*/content.md",
-  { eager: true }
-);
+const categorias = [...new Set(projetos.map(projeto => projeto.categoria))].sort();
 
-const projetos: ProjetoCardProps[] = Object.entries(arquivosProjetos).map(
-  ([caminho, modulo]) => {
-    const fm = modulo.frontmatter;
-
-    const slug = caminho.split("/").pop()!.replace(/\.md$/, "");
-
-    return {
-      slug,
-      titulo: fm.titulo ?? "",
-      resumo: fm.resumo ?? fm.descricao ?? "",
-      level: fm.nivel ?? "iniciante",
-      categoria: fm.categoria ?? "Geral",
-      tags: fm.tags ?? [],
-      idadeMinima: fm.idadeMinima ?? 0,
-      duracao: fm.duracao ?? 1,
-      autor: fm.autor ?? "",
-      imagem: {
-        src: fm.imagem ?? "/images/placeholder-project.jpg",
-        alt: fm.titulo ?? "",
-      },
-    };
-  }
-);
-
-const categorias = [...new Set(projetos.map((p) => p.categoria))].sort();
 const niveis: Array<{ value: string; label: string }> = [
   { value: "iniciante", label: "Iniciante" },
   { value: "intermediário", label: "Intermediário" },
@@ -137,7 +95,7 @@ const niveis: Array<{ value: string; label: string }> = [
 
             <button
               class="filtro-btn filtro-btn--dropdown"
-              data-filter="nivel"
+              data-filter="level"
               aria-expanded="false"
               aria-haspopup="listbox"
             >
@@ -163,14 +121,14 @@ const niveis: Array<{ value: string; label: string }> = [
         </p>
 
         <div class="projetos-grid" id="projetos-grid">
-          {projetos.map((projeto) => (
+          {projetos.map(projeto => (
             <div
               class="projeto-card-wrapper"
               data-titulo={projeto.titulo.toLowerCase()}
-              data-resumo={projeto.resumo.toLowerCase()}
-              data-tags={(projeto.tags ?? []).join(" ").toLowerCase()}
+              data-resumo={`${projeto.resumo}`.toLowerCase()}
+              data-tags={projeto.tags.join(" ").toLowerCase()}
               data-categoria={projeto.categoria}
-              data-nivel={projeto.level}
+              data-level={projeto.level}
               data-idade={projeto.idadeMinima}
               data-duracao={projeto.duracao}
             >
@@ -196,7 +154,7 @@ const niveis: Array<{ value: string; label: string }> = [
   interface EstadoFiltros {
     busca: string;
     categoria: string;
-    nivel: string;
+    level: string;
     idadeMinima: string;
     duracao: string;
   }
@@ -204,7 +162,7 @@ const niveis: Array<{ value: string; label: string }> = [
   const estado: EstadoFiltros = {
     busca: "",
     categoria: "",
-    nivel: "",
+    level: "",
     idadeMinima: "",
     duracao: "",
   };
@@ -215,7 +173,6 @@ const niveis: Array<{ value: string; label: string }> = [
   const contadorTexto = document.getElementById("projetos-count")!;
   const cards = Array.from(grid.querySelectorAll<HTMLElement>(".projeto-card-wrapper"));
 
-  // Sincroniza o campo de busca da Navbar com os filtros da página
   const campoBusca = document.querySelector<HTMLInputElement>("#search");
   if (campoBusca) {
     campoBusca.addEventListener("input", () => {
@@ -267,7 +224,7 @@ const niveis: Array<{ value: string; label: string }> = [
     categoria: "Categoria",
     idadeMinima: "Idade Mínima",
     duracao: "Duração",
-    nivel: "Nível de Dificuldade",
+    level: "Nível de Dificuldade",
   };
 
   function atualizarRotuloBotao(botao: HTMLElement, rotulo: string, valor: string) {
@@ -289,7 +246,7 @@ const niveis: Array<{ value: string; label: string }> = [
   function limparTodosFiltros() {
     estado.busca = "";
     estado.categoria = "";
-    estado.nivel = "";
+    estado.level = "";
     estado.idadeMinima = "";
     estado.duracao = "";
 
@@ -326,7 +283,7 @@ const niveis: Array<{ value: string; label: string }> = [
       const resumo = card.dataset.resumo ?? "";
       const tags = card.dataset.tags ?? "";
       const categoria = card.dataset.categoria ?? "";
-      const nivel = card.dataset.nivel ?? "";
+      const level = card.dataset.level ?? "";
       const idade = Number(card.dataset.idade ?? 0);
       const duracao = Number(card.dataset.duracao ?? 0);
 
@@ -339,14 +296,14 @@ const niveis: Array<{ value: string; label: string }> = [
         categoria.toLowerCase().includes(termoBusca);
 
       const coincideCategoria = !estado.categoria || categoria === estado.categoria;
-      const coincideNivel = !estado.nivel || nivel === estado.nivel;
+      const coincideLevel = !estado.level || level === estado.level;
       const coincideIdade = !estado.idadeMinima || idade >= Number(estado.idadeMinima);
       const coincideDuracao = !estado.duracao || duracao <= Number(estado.duracao);
 
       const exibir =
         coincideBusca &&
         coincideCategoria &&
-        coincideNivel &&
+        coincideLevel &&
         coincideIdade &&
         coincideDuracao;
 
