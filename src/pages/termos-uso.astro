@@ -1,0 +1,67 @@
+---
+import Footer from "../components/Footer.astro";
+import Navbar from "../components/Navbar.astro";
+import MainLayout from "../layouts/MainLayout.astro";
+---
+
+<MainLayout
+  titulo="UDESC Maker — Explore projetos maker e aprenda criando"
+  descricao="Uma plataforma da UDESC para divulgar ciência e tecnologia para a comunidade através da prática e da criatividade."
+>
+  <Navbar />
+    <main class="container">
+      <h1>Termos de Uso - UDESC MAKER</h1>
+
+      <br>
+
+      <section>
+          <h2>1. Aceitação dos Termos</h2>
+          <p>Ao acessar e utilizar o site UDESC MAKER, você concorda com estes Termos de Uso. A plataforma tem como objetivo ser um site web informativo para a divulgação de projetos maker, apresentando atividades práticas de ciência, tecnologia e criatividade.</p>
+      </section>
+
+      <section>
+          <h2>2. Descrição do Serviço</h2>
+          <p>O UDESC MAKER permite que os visitantes naveguem, realizem buscas (por texto, metadados ou categorias) e visualizem instruções detalhadas para reproduzir experimentos ou construções. O conteúdo da plataforma abrange desde projetos para iniciantes até níveis avançados.</p>
+      </section>
+
+      <section>
+          <h2>3. Restrições de Uso e Cadastro</h2>
+          <p>A plataforma é de livre acesso para visualização. Não é permitido o cadastro de usuários no sistema, nem o envio direto de novos projetos pelos visitantes. Todo o conteúdo e o cadastro de novos experimentos são realizados exclusivamente pela equipe responsável pela plataforma.</p>
+      </section>
+
+      <section>
+          <h2>4. Segurança e Responsabilidade do Usuário</h2>
+          <ul>
+              <li><strong>Atenção às Classificações:</strong> Todos os projetos possuem indicações de <em>idade mínima recomendada</em> e <em>nível de dificuldade</em>. É responsabilidade do usuário (ou de seus responsáveis legais, no caso de menores de idade) verificar essas informações antes de iniciar qualquer atividade.</li>
+              <li><strong>Execução Prática:</strong> O UDESC MAKER fornece descrições detalhadas, materiais e instruções. No entanto, a execução das atividades práticas ocorre por conta e risco do visitante. A equipe do UDESC MAKER não se responsabiliza por acidentes, danos a materiais ou lesões decorrentes da reprodução dos experimentos.</li>
+          </ul>
+      </section>
+
+      <section>
+          <h2>5. Propriedade Intelectual</h2>
+          <p>Todo o conteúdo cadastrado, incluindo textos, mídias de destaque (imagens e vídeos) e documentos anexos (como PNG, JPEG e vídeos), é de propriedade do UDESC MAKER ou devidamente licenciado pela equipe do projeto.</p>
+      </section>
+
+      <section>
+          <h2>6. Compatibilidade</h2>
+          <p>O sistema foi desenvolvido para funcionar exclusivamente via navegador web e é compatível com os principais navegadores modernos (Chrome, Edge, Firefox e Safari).</p>
+      </section>
+    </main>
+  <Footer />
+
+  <style>
+    section {
+      margin-top: 10px;
+    }
+
+    main {
+      margin-block: 20px;
+    }
+
+    ul {
+      padding-left: 30px;
+    }
+  </style>
+
+</MainLayout>
+

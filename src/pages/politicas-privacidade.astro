@@ -1,0 +1,61 @@
+---
+import Footer from "../components/Footer.astro";
+import Navbar from "../components/Navbar.astro";
+import MainLayout from "../layouts/MainLayout.astro";
+---
+
+<MainLayout
+  titulo="UDESC Maker — Explore projetos maker e aprenda criando"
+  descricao="Uma plataforma da UDESC para divulgar ciência e tecnologia para a comunidade através da prática e da criatividade."
+>
+  <Navbar />
+    <main class="container">
+
+      <h1>Política de Privacidade - UDESC MAKER</h1>
+
+      <br>
+
+      <section>
+          <h2>1. Informações que Coletamos</h2>
+          <p>O UDESC MAKER valoriza a sua privacidade. Pela natureza do nosso sistema, <strong>a plataforma não permite e não exige o cadastro de usuários</strong>. Sendo assim, não coletamos dados pessoais diretos, como nome, e-mail, telefone ou endereço, por meio de formulários.</p>
+      </section>
+
+      <section>
+          <h2>2. Dados de Navegação</h2>
+          <p>Como a plataforma é hospedada via GitHub Pages e utiliza uma arquitetura estática (Astro), informações básicas de navegação podem ser processadas automaticamente pelos servidores (como endereço IP, tipo de navegador e páginas visitadas) para garantir o funcionamento exclusivo via web. Esses dados não são utilizados pela equipe do UDESC MAKER para identificar visitantes individualmente.</p>
+      </section>
+
+      <section>
+          <h2>3. Uso de Cookies</h2>
+          <p>O site pode utilizar cookies estritamente necessários para o funcionamento das funcionalidades de busca e filtros de projetos (como idade, categoria, nível de dificuldade e duração). Não utilizamos cookies para rastreamento publicitário ou criação de perfis de usuários.</p>
+      </section>
+
+      <section>
+          <h2>4. Compartilhamento de Dados</h2>
+          <p>Como não há coleta de dados cadastrais, o UDESC MAKER não compartilha, vende ou distribui informações pessoais de seus visitantes para terceiros.</p>
+      </section>
+
+      <section>
+          <h2>5. Segurança</h2>
+          <p>Embora a navegação seja simples e não exija login, o site é estruturado com práticas de segurança adequadas para plataformas web estáticas, garantindo que o conteúdo que você acessa é íntegro e seguro.</p>
+      </section>
+
+      <section>
+          <h2>6. Contato</h2>
+          <p>Eventuais dúvidas sobre o conteúdo da plataforma, sugestões ou relatos de problemas na navegação devem ser direcionados aos canais de comunicação oficiais da equipe responsável pelo UDESC MAKER, que é a única entidade com permissão para gerenciar os projetos.</p>
+      </section>
+    </main>
+  <Footer />
+
+  <style>
+    section {
+      margin-top: 10px;
+    }
+
+    main {
+      margin-block: 20px;
+    }
+  </style>
+
+</MainLayout>
+

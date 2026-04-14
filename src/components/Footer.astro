@@ -1,15 +1,15 @@
 ---
 
-import Logo from "./Logo.astro";
 import { base } from 'astro:config/client';
+import Logo from "./Logo.astro";
 
 const acessoRapidoLinks = [
   { label: "Projetos", href: `${base}/projetos` },
 ];
 
 const legalLinks = [
-  { label: "Privacidade", href: `${base}/privacidade` },
-  { label: "Termos de Uso", href: `${base}/termos` },
+  { label: "Privacidade", href: `${base}/politicas-privacidade` },
+  { label: "Termos de Uso", href: `${base}/termos-uso` },
 ];
 
 const anoAtual = new Date().getFullYear();
